@@ -6207,8 +6207,7 @@ func (m *ResponseHistoryDifference) GetClock() int64 {
 // pinnedMessages Optional pinned messages
 // historyMessage Optional last messages
 type Dialog struct {
-	Peer *Peer `protobuf:"bytes,1,opt,name=peer,proto3" json:"peer,omitempty"`
-	/// counter of unread messages
+	Peer        *Peer            `protobuf:"bytes,1,opt,name=peer,proto3" json:"peer,omitempty"`
 	UnreadCount int32            `protobuf:"varint,3,opt,name=unread_count,json=unreadCount,proto3" json:"unread_count,omitempty"`
 	SortDate    int64            `protobuf:"varint,4,opt,name=sort_date,json=sortDate,proto3" json:"sort_date,omitempty"`
 	SenderUid   int32            `protobuf:"varint,5,opt,name=sender_uid,json=senderUid,proto3" json:"sender_uid,omitempty"`
