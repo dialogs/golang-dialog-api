@@ -53,6 +53,36 @@ func (AppType) EnumDescriptor() ([]byte, []int) {
 	return fileDescriptor_6320f0162bfbffc9, []int{0}
 }
 
+type UpdateMiniApp_AppLifecycle int32
+
+const (
+	APPLIFECYCLE_CREATED  UpdateMiniApp_AppLifecycle = 0
+	APPLIFECYCLE_UPDATED  UpdateMiniApp_AppLifecycle = 1
+	APPLIFECYCLE_ENABLED  UpdateMiniApp_AppLifecycle = 2
+	APPLIFECYCLE_DISABLED UpdateMiniApp_AppLifecycle = 3
+	APPLIFECYCLE_DELETED  UpdateMiniApp_AppLifecycle = 4
+)
+
+var UpdateMiniApp_AppLifecycle_name = map[int32]string{
+	0: "APPLIFECYCLE_CREATED",
+	1: "APPLIFECYCLE_UPDATED",
+	2: "APPLIFECYCLE_ENABLED",
+	3: "APPLIFECYCLE_DISABLED",
+	4: "APPLIFECYCLE_DELETED",
+}
+
+var UpdateMiniApp_AppLifecycle_value = map[string]int32{
+	"APPLIFECYCLE_CREATED":  0,
+	"APPLIFECYCLE_UPDATED":  1,
+	"APPLIFECYCLE_ENABLED":  2,
+	"APPLIFECYCLE_DISABLED": 3,
+	"APPLIFECYCLE_DELETED":  4,
+}
+
+func (UpdateMiniApp_AppLifecycle) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor_6320f0162bfbffc9, []int{1, 0}
+}
+
 type MiniApp struct {
 	// unique identifier of the app
 	Id *UUIDValue `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -187,16 +217,68 @@ func (m *MiniApp) GetIsEnabled() bool {
 	return false
 }
 
+// App update
+type UpdateMiniApp struct {
+	AppLifecycle UpdateMiniApp_AppLifecycle `protobuf:"varint,1,opt,name=app_lifecycle,json=appLifecycle,proto3,enum=dialog.UpdateMiniApp_AppLifecycle" json:"app_lifecycle,omitempty"`
+	AppData      *MiniApp                   `protobuf:"bytes,2,opt,name=app_data,json=appData,proto3" json:"app_data,omitempty"`
+}
+
+func (m *UpdateMiniApp) Reset()      { *m = UpdateMiniApp{} }
+func (*UpdateMiniApp) ProtoMessage() {}
+func (*UpdateMiniApp) Descriptor() ([]byte, []int) {
+	return fileDescriptor_6320f0162bfbffc9, []int{1}
+}
+func (m *UpdateMiniApp) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *UpdateMiniApp) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_UpdateMiniApp.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *UpdateMiniApp) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_UpdateMiniApp.Merge(m, src)
+}
+func (m *UpdateMiniApp) XXX_Size() int {
+	return m.Size()
+}
+func (m *UpdateMiniApp) XXX_DiscardUnknown() {
+	xxx_messageInfo_UpdateMiniApp.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_UpdateMiniApp proto.InternalMessageInfo
+
+func (m *UpdateMiniApp) GetAppLifecycle() UpdateMiniApp_AppLifecycle {
+	if m != nil {
+		return m.AppLifecycle
+	}
+	return APPLIFECYCLE_CREATED
+}
+
+func (m *UpdateMiniApp) GetAppData() *MiniApp {
+	if m != nil {
+		return m.AppData
+	}
+	return nil
+}
+
 // Request to get list of mini-apps
 type GetAppsRequest struct {
-	// if present then return only apps created/modified since given clock
-	FromClock *types.Int64Value `protobuf:"bytes,1,opt,name=from_clock,json=fromClock,proto3" json:"from_clock,omitempty"`
+	// return only apps created/modified since given clock
+	FromClock int64 `protobuf:"varint,1,opt,name=from_clock,json=fromClock,proto3" json:"from_clock,omitempty"`
 }
 
 func (m *GetAppsRequest) Reset()      { *m = GetAppsRequest{} }
 func (*GetAppsRequest) ProtoMessage() {}
 func (*GetAppsRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_6320f0162bfbffc9, []int{1}
+	return fileDescriptor_6320f0162bfbffc9, []int{2}
 }
 func (m *GetAppsRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -225,11 +307,11 @@ func (m *GetAppsRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_GetAppsRequest proto.InternalMessageInfo
 
-func (m *GetAppsRequest) GetFromClock() *types.Int64Value {
+func (m *GetAppsRequest) GetFromClock() int64 {
 	if m != nil {
 		return m.FromClock
 	}
-	return nil
+	return 0
 }
 
 // List of the mini-app
@@ -241,7 +323,7 @@ type GetAppsResponse struct {
 func (m *GetAppsResponse) Reset()      { *m = GetAppsResponse{} }
 func (*GetAppsResponse) ProtoMessage() {}
 func (*GetAppsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_6320f0162bfbffc9, []int{2}
+	return fileDescriptor_6320f0162bfbffc9, []int{3}
 }
 func (m *GetAppsResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -292,7 +374,7 @@ type FindAppRequest struct {
 func (m *FindAppRequest) Reset()      { *m = FindAppRequest{} }
 func (*FindAppRequest) ProtoMessage() {}
 func (*FindAppRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_6320f0162bfbffc9, []int{3}
+	return fileDescriptor_6320f0162bfbffc9, []int{4}
 }
 func (m *FindAppRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -336,7 +418,7 @@ type FindAppResponse struct {
 func (m *FindAppResponse) Reset()      { *m = FindAppResponse{} }
 func (*FindAppResponse) ProtoMessage() {}
 func (*FindAppResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_6320f0162bfbffc9, []int{4}
+	return fileDescriptor_6320f0162bfbffc9, []int{5}
 }
 func (m *FindAppResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -372,61 +454,170 @@ func (m *FindAppResponse) GetApp() *MiniApp {
 	return nil
 }
 
+// Issue JWT token for third-party applications
+type IssueAccessTokenRequest struct {
+	AppId *UUIDValue `protobuf:"bytes,1,opt,name=app_id,json=appId,proto3" json:"app_id,omitempty"`
+}
+
+func (m *IssueAccessTokenRequest) Reset()      { *m = IssueAccessTokenRequest{} }
+func (*IssueAccessTokenRequest) ProtoMessage() {}
+func (*IssueAccessTokenRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_6320f0162bfbffc9, []int{6}
+}
+func (m *IssueAccessTokenRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *IssueAccessTokenRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_IssueAccessTokenRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *IssueAccessTokenRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_IssueAccessTokenRequest.Merge(m, src)
+}
+func (m *IssueAccessTokenRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *IssueAccessTokenRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_IssueAccessTokenRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_IssueAccessTokenRequest proto.InternalMessageInfo
+
+func (m *IssueAccessTokenRequest) GetAppId() *UUIDValue {
+	if m != nil {
+		return m.AppId
+	}
+	return nil
+}
+
+type AccessTokenResponse struct {
+	AccessToken string `protobuf:"bytes,1,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"`
+}
+
+func (m *AccessTokenResponse) Reset()      { *m = AccessTokenResponse{} }
+func (*AccessTokenResponse) ProtoMessage() {}
+func (*AccessTokenResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_6320f0162bfbffc9, []int{7}
+}
+func (m *AccessTokenResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *AccessTokenResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_AccessTokenResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *AccessTokenResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AccessTokenResponse.Merge(m, src)
+}
+func (m *AccessTokenResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *AccessTokenResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_AccessTokenResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_AccessTokenResponse proto.InternalMessageInfo
+
+func (m *AccessTokenResponse) GetAccessToken() string {
+	if m != nil {
+		return m.AccessToken
+	}
+	return ""
+}
+
 func init() {
 	proto.RegisterEnum("dialog.AppType", AppType_name, AppType_value)
+	proto.RegisterEnum("dialog.UpdateMiniApp_AppLifecycle", UpdateMiniApp_AppLifecycle_name, UpdateMiniApp_AppLifecycle_value)
 	proto.RegisterType((*MiniApp)(nil), "dialog.MiniApp")
+	proto.RegisterType((*UpdateMiniApp)(nil), "dialog.UpdateMiniApp")
 	proto.RegisterType((*GetAppsRequest)(nil), "dialog.GetAppsRequest")
 	proto.RegisterType((*GetAppsResponse)(nil), "dialog.GetAppsResponse")
 	proto.RegisterType((*FindAppRequest)(nil), "dialog.FindAppRequest")
 	proto.RegisterType((*FindAppResponse)(nil), "dialog.FindAppResponse")
+	proto.RegisterType((*IssueAccessTokenRequest)(nil), "dialog.IssueAccessTokenRequest")
+	proto.RegisterType((*AccessTokenResponse)(nil), "dialog.AccessTokenResponse")
 }
 
 func init() { proto.RegisterFile("miniappsregistry.proto", fileDescriptor_6320f0162bfbffc9) }
 
 var fileDescriptor_6320f0162bfbffc9 = []byte{
-	// 603 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x64, 0x52, 0x4f, 0x4f, 0x14, 0x4f,
-	0x10, 0x9d, 0xde, 0x85, 0x9d, 0xdd, 0x1a, 0x7e, 0x0b, 0x74, 0x7e, 0xc2, 0x04, 0xb5, 0x33, 0xac,
-	0x24, 0x6e, 0x38, 0x2c, 0x09, 0x12, 0x0f, 0x5c, 0xcc, 0x82, 0x68, 0x36, 0x22, 0x26, 0x23, 0x7f,
-	0x8e, 0x93, 0x61, 0xa6, 0x77, 0xd3, 0x32, 0xdb, 0xdd, 0x4e, 0x37, 0x1a, 0x6e, 0x7e, 0x04, 0xfd,
-	0x16, 0x7e, 0x14, 0x8f, 0x1c, 0x39, 0xca, 0x70, 0xf1, 0xc8, 0xd9, 0x93, 0xe9, 0x99, 0x5e, 0x10,
-	0xb9, 0x55, 0xbf, 0x7a, 0x55, 0xf5, 0xba, 0x5e, 0xc1, 0xc2, 0x98, 0x71, 0x16, 0x4b, 0xa9, 0x72,
-	0x3a, 0x62, 0x4a, 0xe7, 0x67, 0x3d, 0x99, 0x0b, 0x2d, 0x70, 0x23, 0x65, 0x71, 0x26, 0x46, 0x4b,
-	0x64, 0x24, 0xc4, 0x28, 0xa3, 0x6b, 0x25, 0x7a, 0x7c, 0x3a, 0x5c, 0xfb, 0x9c, 0xc7, 0x52, 0xd2,
-	0x5c, 0x55, 0xbc, 0xa5, 0xf9, 0x94, 0x0e, 0x19, 0x67, 0x9a, 0x09, 0x6e, 0xa1, 0xce, 0xef, 0x1a,
-	0xb8, 0x6f, 0x19, 0x67, 0x7d, 0x29, 0xf1, 0x32, 0xd4, 0x58, 0xea, 0xa3, 0x00, 0x75, 0xbd, 0xf5,
-	0xf9, 0x5e, 0xd5, 0xb3, 0x77, 0x70, 0x30, 0x78, 0x79, 0x18, 0x67, 0xa7, 0x34, 0xac, 0xb1, 0x14,
-	0xaf, 0x42, 0x33, 0x96, 0x32, 0xd2, 0x67, 0x92, 0xfa, 0xb5, 0x00, 0x75, 0xdb, 0xeb, 0xb3, 0x13,
-	0x62, 0x5f, 0xca, 0xfd, 0x33, 0x49, 0x43, 0x37, 0xae, 0x02, 0x8c, 0x61, 0x8a, 0xc7, 0x63, 0xea,
-	0xd7, 0x03, 0xd4, 0x6d, 0x85, 0x65, 0x8c, 0x03, 0xf0, 0x52, 0xaa, 0x92, 0x9c, 0x49, 0x23, 0xc2,
-	0x9f, 0x2a, 0x53, 0x7f, 0x43, 0xd8, 0x07, 0xf7, 0x13, 0xcd, 0x95, 0xc9, 0x4e, 0x97, 0xd9, 0xc9,
-	0xd3, 0xf4, 0x63, 0x89, 0xe0, 0x7e, 0xa3, 0xea, 0x67, 0x62, 0x83, 0x65, 0x8c, 0x9f, 0xf8, 0x6e,
-	0x85, 0x99, 0x18, 0xbf, 0x80, 0x99, 0x0f, 0x4a, 0xf0, 0x28, 0x11, 0x5c, 0x53, 0xae, 0xfd, 0x66,
-	0xf9, 0xa1, 0x47, 0xbd, 0x6a, 0x39, 0xbd, 0xc9, 0x72, 0x7a, 0xef, 0x75, 0xce, 0xf8, 0xa8, 0xfa,
-	0x9b, 0x67, 0x2a, 0xb6, 0xab, 0x02, 0xdc, 0x81, 0xff, 0x92, 0x9c, 0xc6, 0x9a, 0xa6, 0x51, 0xac,
-	0x23, 0xad, 0xfc, 0x56, 0x80, 0xba, 0xf5, 0xd0, 0xb3, 0x60, 0x5f, 0xef, 0x2b, 0xbc, 0x02, 0xed,
-	0xb1, 0x48, 0xd9, 0x90, 0xdd, 0x90, 0xa0, 0x24, 0xcd, 0x4c, 0xd0, 0x92, 0xf5, 0x18, 0x80, 0xa9,
-	0x88, 0xf2, 0xf8, 0x38, 0xa3, 0xa9, 0xef, 0x05, 0xa8, 0xdb, 0x0c, 0x5b, 0x4c, 0xed, 0x54, 0x40,
-	0x67, 0x17, 0xda, 0xaf, 0xa9, 0xee, 0x4b, 0xa9, 0x42, 0xfa, 0xf1, 0x94, 0x2a, 0x8d, 0x37, 0x01,
-	0x86, 0xb9, 0x18, 0x47, 0x49, 0x26, 0x92, 0x13, 0x6b, 0xc5, 0xc3, 0x7b, 0xca, 0x07, 0x5c, 0x3f,
-	0xdf, 0xa8, 0x84, 0xb7, 0x0c, 0x7d, 0xdb, 0xb0, 0x3b, 0xbb, 0x30, 0x7b, 0xd3, 0x4d, 0x49, 0xc1,
-	0x15, 0xc5, 0x4f, 0x60, 0xca, 0x9c, 0x8b, 0x8f, 0x82, 0x7a, 0xd7, 0xbb, 0xb5, 0xca, 0x1a, 0x1e,
-	0x96, 0x49, 0xfc, 0x3f, 0x4c, 0x57, 0xe3, 0x6a, 0xe5, 0x0f, 0xaa, 0x47, 0xe7, 0x29, 0xb4, 0x5f,
-	0x31, 0x9e, 0x1a, 0x9a, 0xd5, 0xf6, 0x00, 0x1a, 0xc6, 0x7b, 0x7b, 0x22, 0xad, 0x70, 0x3a, 0x96,
-	0x72, 0x90, 0x76, 0x36, 0x60, 0xf6, 0x86, 0x68, 0xc7, 0x2e, 0x43, 0x3d, 0x96, 0xd2, 0xca, 0xbf,
-	0x37, 0xd5, 0xe4, 0x56, 0x57, 0xc0, 0xb5, 0x07, 0x83, 0x3d, 0x70, 0x0f, 0xf6, 0xde, 0xec, 0xbd,
-	0x3b, 0xda, 0x9b, 0x73, 0xf0, 0x0c, 0x34, 0x8f, 0x76, 0xb6, 0xa2, 0xc3, 0xc1, 0xce, 0xd1, 0x1c,
-	0x5a, 0xff, 0x86, 0x60, 0x71, 0x3b, 0x63, 0x94, 0x6b, 0x65, 0xab, 0x55, 0x68, 0x4f, 0x1f, 0x6f,
-	0x82, 0x6b, 0xe7, 0xe2, 0x85, 0xc9, 0x88, 0xbb, 0x8a, 0x97, 0x16, 0xef, 0xe1, 0x56, 0xe0, 0x26,
-	0xb8, 0x76, 0x55, 0xb7, 0xb5, 0x77, 0x9d, 0xb8, 0xad, 0xfd, 0x67, 0xa7, 0x5b, 0x1b, 0xe7, 0x97,
-	0xc4, 0xb9, 0xb8, 0x24, 0xce, 0xf5, 0x25, 0x41, 0x5f, 0x0a, 0x82, 0xbe, 0x17, 0x04, 0xfd, 0x28,
-	0x08, 0x3a, 0x2f, 0x08, 0xfa, 0x59, 0x10, 0xf4, 0xab, 0x20, 0xce, 0x75, 0x41, 0xd0, 0xd7, 0x2b,
-	0xe2, 0x9c, 0x5f, 0x11, 0xe7, 0xe2, 0x8a, 0x38, 0xc7, 0x8d, 0xd2, 0xbc, 0x67, 0x7f, 0x02, 0x00,
-	0x00, 0xff, 0xff, 0x18, 0x8a, 0xe0, 0x00, 0xc3, 0x03, 0x00, 0x00,
+	// 782 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x74, 0x54, 0x41, 0x6f, 0xdb, 0x36,
+	0x18, 0x35, 0xed, 0x24, 0x8a, 0x3f, 0x39, 0x8e, 0xcb, 0xb5, 0x8d, 0x96, 0x6d, 0x9a, 0xab, 0x15,
+	0x98, 0xd1, 0x83, 0x03, 0x64, 0x3d, 0x0c, 0xbd, 0x0c, 0x8a, 0xad, 0x16, 0xc6, 0xbc, 0x2c, 0x50,
+	0xe3, 0x06, 0x3b, 0x09, 0x8c, 0x44, 0x1b, 0x5c, 0x14, 0x8a, 0x13, 0x99, 0x0d, 0xb9, 0xed, 0x27,
+	0x6c, 0xb7, 0xfd, 0x84, 0xfd, 0x94, 0x1d, 0x73, 0xec, 0x71, 0x71, 0x2e, 0x3b, 0xf6, 0xbc, 0xd3,
+	0x40, 0x4a, 0x72, 0xec, 0xba, 0xbb, 0x91, 0xef, 0xbd, 0xef, 0xfb, 0xc8, 0xf7, 0x40, 0xc2, 0xe3,
+	0x4b, 0xc6, 0x19, 0x11, 0x42, 0xe6, 0x74, 0xc6, 0xa4, 0xca, 0xaf, 0xfb, 0x22, 0xcf, 0x54, 0x86,
+	0xb7, 0x12, 0x46, 0xd2, 0x6c, 0xb6, 0xef, 0xce, 0xb2, 0x6c, 0x96, 0xd2, 0x03, 0x83, 0x9e, 0x5f,
+	0x4d, 0x0f, 0x7e, 0xc9, 0x89, 0x10, 0x34, 0x97, 0x85, 0x6e, 0xff, 0x41, 0x42, 0xa7, 0x8c, 0x33,
+	0xc5, 0x32, 0x5e, 0x42, 0xde, 0xbf, 0x75, 0xb0, 0xbe, 0x63, 0x9c, 0xf9, 0x42, 0xe0, 0x27, 0x50,
+	0x67, 0x89, 0x83, 0xba, 0xa8, 0x67, 0x1f, 0x3e, 0xe8, 0x17, 0x3d, 0xfb, 0x93, 0xc9, 0x68, 0xf8,
+	0x86, 0xa4, 0x57, 0x34, 0xac, 0xb3, 0x04, 0x3f, 0x83, 0x6d, 0x22, 0x44, 0xa4, 0xae, 0x05, 0x75,
+	0xea, 0x5d, 0xd4, 0x6b, 0x1f, 0xee, 0x56, 0x42, 0x5f, 0x88, 0xd3, 0x6b, 0x41, 0x43, 0x8b, 0x14,
+	0x0b, 0x8c, 0x61, 0x83, 0x93, 0x4b, 0xea, 0x34, 0xba, 0xa8, 0xd7, 0x0c, 0xcd, 0x1a, 0x77, 0xc1,
+	0x4e, 0xa8, 0x8c, 0x73, 0x26, 0xf4, 0x21, 0x9c, 0x0d, 0x43, 0x2d, 0x43, 0xd8, 0x01, 0xeb, 0x67,
+	0x9a, 0x4b, 0xcd, 0x6e, 0x1a, 0xb6, 0xda, 0xea, 0x7e, 0x2c, 0xce, 0xb8, 0xb3, 0x55, 0xf4, 0xd3,
+	0x6b, 0x8d, 0xa5, 0x8c, 0x5f, 0x38, 0x56, 0x81, 0xe9, 0x35, 0xfe, 0x06, 0x5a, 0x3f, 0xca, 0x8c,
+	0x47, 0x71, 0xc6, 0x15, 0xe5, 0xca, 0xd9, 0x36, 0x17, 0xfa, 0xb4, 0x5f, 0x98, 0xd3, 0xaf, 0xcc,
+	0xe9, 0xbf, 0x56, 0x39, 0xe3, 0xb3, 0xe2, 0x6e, 0xb6, 0xae, 0x18, 0x14, 0x05, 0xd8, 0x83, 0x9d,
+	0x38, 0xa7, 0x44, 0xd1, 0x24, 0x22, 0x2a, 0x52, 0xd2, 0x69, 0x76, 0x51, 0xaf, 0x11, 0xda, 0x25,
+	0xe8, 0xab, 0x53, 0x89, 0x9f, 0x42, 0xfb, 0x32, 0x4b, 0xd8, 0x94, 0x2d, 0x44, 0x60, 0x44, 0xad,
+	0x0a, 0x35, 0xaa, 0xcf, 0x00, 0x98, 0x8c, 0x28, 0x27, 0xe7, 0x29, 0x4d, 0x1c, 0xbb, 0x8b, 0x7a,
+	0xdb, 0x61, 0x93, 0xc9, 0xa0, 0x00, 0xbc, 0x3f, 0xea, 0xb0, 0x33, 0x11, 0x09, 0x51, 0xb4, 0x8a,
+	0xe0, 0x15, 0xec, 0x68, 0x7f, 0x53, 0x36, 0xa5, 0xf1, 0x75, 0x9c, 0x52, 0x93, 0x46, 0xfb, 0xd0,
+	0x5b, 0xa4, 0xb1, 0xac, 0xd6, 0x96, 0x8f, 0x2b, 0x65, 0xd8, 0x22, 0x4b, 0xbb, 0x2a, 0xa8, 0x84,
+	0x28, 0x62, 0x82, 0xb2, 0xef, 0x83, 0x2a, 0xab, 0x4d, 0x50, 0x43, 0xa2, 0x88, 0xf7, 0x3b, 0x82,
+	0xd6, 0x72, 0x2b, 0xec, 0xc0, 0x43, 0xff, 0xe4, 0x64, 0x3c, 0x7a, 0x19, 0x0c, 0x7e, 0x18, 0x8c,
+	0x83, 0x68, 0x10, 0x06, 0xfe, 0x69, 0x30, 0xec, 0xd4, 0xd6, 0x98, 0xc9, 0xc9, 0xd0, 0x30, 0x68,
+	0x8d, 0x09, 0x8e, 0xfd, 0xa3, 0x71, 0x30, 0xec, 0xd4, 0xf1, 0xc7, 0xf0, 0x68, 0x85, 0x19, 0x8e,
+	0x5e, 0x17, 0x54, 0x63, 0xad, 0x68, 0x18, 0x8c, 0x03, 0xdd, 0x6e, 0xc3, 0x3b, 0x80, 0xf6, 0x2b,
+	0xaa, 0x7c, 0x21, 0x64, 0x48, 0x7f, 0xba, 0xa2, 0x52, 0x69, 0x2f, 0xa7, 0x79, 0x76, 0x19, 0xc5,
+	0x69, 0x16, 0x5f, 0x18, 0x5f, 0x1a, 0x61, 0x53, 0x23, 0x03, 0x0d, 0x78, 0x63, 0xd8, 0x5d, 0x14,
+	0x48, 0x91, 0x71, 0x49, 0xf1, 0x17, 0xb0, 0xa1, 0x1f, 0x8b, 0x83, 0xba, 0x8d, 0x0f, 0xdd, 0xdf,
+	0x90, 0xf8, 0x21, 0x6c, 0x16, 0x1d, 0xeb, 0xa6, 0x63, 0xb1, 0xf1, 0xbe, 0x84, 0xf6, 0x4b, 0xc6,
+	0x13, 0x2d, 0x2b, 0xc7, 0x3f, 0x82, 0x2d, 0x6d, 0x68, 0xf9, 0x40, 0x9a, 0xe1, 0x26, 0x11, 0x62,
+	0x94, 0x78, 0xcf, 0x61, 0x77, 0x21, 0x2c, 0xc7, 0x3e, 0x81, 0x06, 0x11, 0xa2, 0x7c, 0x47, 0x6b,
+	0x53, 0x35, 0xe7, 0x0d, 0x60, 0x6f, 0x24, 0xe5, 0x15, 0xf5, 0xe3, 0x98, 0x4a, 0x79, 0x9a, 0x5d,
+	0x50, 0x5e, 0xcd, 0xe9, 0xad, 0xcc, 0xf9, 0xe0, 0x43, 0x2c, 0x47, 0x7f, 0x0d, 0x1f, 0xad, 0xd4,
+	0x2f, 0xc6, 0xb7, 0x88, 0x81, 0x23, 0xa5, 0xf1, 0xf2, 0xb8, 0x36, 0xb9, 0x97, 0x3e, 0x7b, 0x0a,
+	0x56, 0xf9, 0x5a, 0xb1, 0x0d, 0xd6, 0xe4, 0xf8, 0xdb, 0xe3, 0xef, 0xcf, 0x8e, 0x3b, 0x35, 0xdc,
+	0x82, 0xed, 0xb3, 0xe0, 0x28, 0x7a, 0x33, 0x0a, 0xce, 0x3a, 0xe8, 0xf0, 0x0e, 0xc1, 0xde, 0x20,
+	0x65, 0x94, 0x2b, 0x59, 0x1e, 0x5e, 0x86, 0xe5, 0xbf, 0x83, 0x5f, 0x80, 0x55, 0x5e, 0x1b, 0x3f,
+	0xae, 0x0e, 0xb8, 0x6a, 0xd8, 0xfe, 0xde, 0x1a, 0x5e, 0x1e, 0xf0, 0x05, 0x58, 0x65, 0x52, 0xf7,
+	0xb5, 0xab, 0x59, 0xdf, 0xd7, 0xbe, 0x1f, 0xe9, 0x09, 0x74, 0xde, 0x37, 0x0e, 0x7f, 0x5e, 0x89,
+	0xff, 0xc7, 0xd2, 0xfd, 0x4f, 0x16, 0x5f, 0xd4, 0xba, 0x5d, 0x47, 0xcf, 0x6f, 0x6e, 0xdd, 0xda,
+	0xdb, 0x5b, 0xb7, 0xf6, 0xee, 0xd6, 0x45, 0xbf, 0xce, 0x5d, 0xf4, 0xe7, 0xdc, 0x45, 0x7f, 0xcd,
+	0x5d, 0x74, 0x33, 0x77, 0xd1, 0xdf, 0x73, 0x17, 0xfd, 0x33, 0x77, 0x6b, 0xef, 0xe6, 0x2e, 0xfa,
+	0xed, 0xce, 0xad, 0xdd, 0xdc, 0xb9, 0xb5, 0xb7, 0x77, 0x6e, 0xed, 0x7c, 0xcb, 0xfc, 0x22, 0x5f,
+	0xfd, 0x17, 0x00, 0x00, 0xff, 0xff, 0x16, 0x61, 0x8a, 0xc7, 0x92, 0x05, 0x00, 0x00,
 }
 
 func (x AppType) String() string {
 	s, ok := AppType_name[int32(x)]
+	if ok {
+		return s
+	}
+	return strconv.Itoa(int(x))
+}
+func (x UpdateMiniApp_AppLifecycle) String() string {
+	s, ok := UpdateMiniApp_AppLifecycle_name[int32(x)]
 	if ok {
 		return s
 	}
@@ -486,6 +677,33 @@ func (this *MiniApp) Equal(that interface{}) bool {
 	}
 	return true
 }
+func (this *UpdateMiniApp) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*UpdateMiniApp)
+	if !ok {
+		that2, ok := that.(UpdateMiniApp)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.AppLifecycle != that1.AppLifecycle {
+		return false
+	}
+	if !this.AppData.Equal(that1.AppData) {
+		return false
+	}
+	return true
+}
 func (this *GetAppsRequest) Equal(that interface{}) bool {
 	if that == nil {
 		return this == nil
@@ -505,7 +723,7 @@ func (this *GetAppsRequest) Equal(that interface{}) bool {
 	} else if this == nil {
 		return false
 	}
-	if !this.FromClock.Equal(that1.FromClock) {
+	if this.FromClock != that1.FromClock {
 		return false
 	}
 	return true
@@ -590,6 +808,54 @@ func (this *FindAppResponse) Equal(that interface{}) bool {
 	}
 	return true
 }
+func (this *IssueAccessTokenRequest) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*IssueAccessTokenRequest)
+	if !ok {
+		that2, ok := that.(IssueAccessTokenRequest)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if !this.AppId.Equal(that1.AppId) {
+		return false
+	}
+	return true
+}
+func (this *AccessTokenResponse) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*AccessTokenResponse)
+	if !ok {
+		that2, ok := that.(AccessTokenResponse)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.AccessToken != that1.AccessToken {
+		return false
+	}
+	return true
+}
 func (this *MiniApp) GoString() string {
 	if this == nil {
 		return "nil"
@@ -614,15 +880,26 @@ func (this *MiniApp) GoString() string {
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
+func (this *UpdateMiniApp) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 6)
+	s = append(s, "&dialog.UpdateMiniApp{")
+	s = append(s, "AppLifecycle: "+fmt.Sprintf("%#v", this.AppLifecycle)+",\n")
+	if this.AppData != nil {
+		s = append(s, "AppData: "+fmt.Sprintf("%#v", this.AppData)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
 func (this *GetAppsRequest) GoString() string {
 	if this == nil {
 		return "nil"
 	}
 	s := make([]string, 0, 5)
 	s = append(s, "&dialog.GetAppsRequest{")
-	if this.FromClock != nil {
-		s = append(s, "FromClock: "+fmt.Sprintf("%#v", this.FromClock)+",\n")
-	}
+	s = append(s, "FromClock: "+fmt.Sprintf("%#v", this.FromClock)+",\n")
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
@@ -661,6 +938,28 @@ func (this *FindAppResponse) GoString() string {
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
+func (this *IssueAccessTokenRequest) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 5)
+	s = append(s, "&dialog.IssueAccessTokenRequest{")
+	if this.AppId != nil {
+		s = append(s, "AppId: "+fmt.Sprintf("%#v", this.AppId)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *AccessTokenResponse) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 5)
+	s = append(s, "&dialog.AccessTokenResponse{")
+	s = append(s, "AccessToken: "+fmt.Sprintf("%#v", this.AccessToken)+",\n")
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
 func valueToGoStringMiniappsregistry(v interface{}, typ string) string {
 	rv := reflect.ValueOf(v)
 	if rv.IsNil() {
@@ -684,6 +983,7 @@ const _ = grpc.SupportPackageIsVersion4
 type ClientsMiniAppsRegistryClient interface {
 	FindApp(ctx context.Context, in *FindAppRequest, opts ...grpc.CallOption) (*FindAppResponse, error)
 	GetApps(ctx context.Context, in *GetAppsRequest, opts ...grpc.CallOption) (*GetAppsResponse, error)
+	IssueAccessToken(ctx context.Context, in *IssueAccessTokenRequest, opts ...grpc.CallOption) (*AccessTokenResponse, error)
 }
 
 type clientsMiniAppsRegistryClient struct {
@@ -712,10 +1012,20 @@ func (c *clientsMiniAppsRegistryClient) GetApps(ctx context.Context, in *GetApps
 	return out, nil
 }
 
+func (c *clientsMiniAppsRegistryClient) IssueAccessToken(ctx context.Context, in *IssueAccessTokenRequest, opts ...grpc.CallOption) (*AccessTokenResponse, error) {
+	out := new(AccessTokenResponse)
+	err := c.cc.Invoke(ctx, "/dialog.ClientsMiniAppsRegistry/IssueAccessToken", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ClientsMiniAppsRegistryServer is the server API for ClientsMiniAppsRegistry service.
 type ClientsMiniAppsRegistryServer interface {
 	FindApp(context.Context, *FindAppRequest) (*FindAppResponse, error)
 	GetApps(context.Context, *GetAppsRequest) (*GetAppsResponse, error)
+	IssueAccessToken(context.Context, *IssueAccessTokenRequest) (*AccessTokenResponse, error)
 }
 
 // UnimplementedClientsMiniAppsRegistryServer can be embedded to have forward compatible implementations.
@@ -727,6 +1037,9 @@ func (*UnimplementedClientsMiniAppsRegistryServer) FindApp(ctx context.Context, 
 }
 func (*UnimplementedClientsMiniAppsRegistryServer) GetApps(ctx context.Context, req *GetAppsRequest) (*GetAppsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetApps not implemented")
+}
+func (*UnimplementedClientsMiniAppsRegistryServer) IssueAccessToken(ctx context.Context, req *IssueAccessTokenRequest) (*AccessTokenResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IssueAccessToken not implemented")
 }
 
 func RegisterClientsMiniAppsRegistryServer(s *grpc.Server, srv ClientsMiniAppsRegistryServer) {
@@ -769,6 +1082,24 @@ func _ClientsMiniAppsRegistry_GetApps_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ClientsMiniAppsRegistry_IssueAccessToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IssueAccessTokenRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ClientsMiniAppsRegistryServer).IssueAccessToken(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/dialog.ClientsMiniAppsRegistry/IssueAccessToken",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ClientsMiniAppsRegistryServer).IssueAccessToken(ctx, req.(*IssueAccessTokenRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _ClientsMiniAppsRegistry_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "dialog.ClientsMiniAppsRegistry",
 	HandlerType: (*ClientsMiniAppsRegistryServer)(nil),
@@ -780,6 +1111,10 @@ var _ClientsMiniAppsRegistry_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetApps",
 			Handler:    _ClientsMiniAppsRegistry_GetApps_Handler,
+		},
+		{
+			MethodName: "IssueAccessToken",
+			Handler:    _ClientsMiniAppsRegistry_IssueAccessToken_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -893,6 +1228,46 @@ func (m *MiniApp) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
+func (m *UpdateMiniApp) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *UpdateMiniApp) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *UpdateMiniApp) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.AppData != nil {
+		{
+			size, err := m.AppData.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintMiniappsregistry(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if m.AppLifecycle != 0 {
+		i = encodeVarintMiniappsregistry(dAtA, i, uint64(m.AppLifecycle))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
 func (m *GetAppsRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -913,17 +1288,10 @@ func (m *GetAppsRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if m.FromClock != nil {
-		{
-			size, err := m.FromClock.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintMiniappsregistry(dAtA, i, uint64(size))
-		}
+	if m.FromClock != 0 {
+		i = encodeVarintMiniappsregistry(dAtA, i, uint64(m.FromClock))
 		i--
-		dAtA[i] = 0xa
+		dAtA[i] = 0x8
 	}
 	return len(dAtA) - i, nil
 }
@@ -1035,6 +1403,71 @@ func (m *FindAppResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
+func (m *IssueAccessTokenRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *IssueAccessTokenRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *IssueAccessTokenRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.AppId != nil {
+		{
+			size, err := m.AppId.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintMiniappsregistry(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *AccessTokenResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *AccessTokenResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *AccessTokenResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.AccessToken) > 0 {
+		i -= len(m.AccessToken)
+		copy(dAtA[i:], m.AccessToken)
+		i = encodeVarintMiniappsregistry(dAtA, i, uint64(len(m.AccessToken)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintMiniappsregistry(dAtA []byte, offset int, v uint64) int {
 	offset -= sovMiniappsregistry(v)
 	base := offset
@@ -1095,15 +1528,30 @@ func (m *MiniApp) Size() (n int) {
 	return n
 }
 
+func (m *UpdateMiniApp) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.AppLifecycle != 0 {
+		n += 1 + sovMiniappsregistry(uint64(m.AppLifecycle))
+	}
+	if m.AppData != nil {
+		l = m.AppData.Size()
+		n += 1 + l + sovMiniappsregistry(uint64(l))
+	}
+	return n
+}
+
 func (m *GetAppsRequest) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
-	if m.FromClock != nil {
-		l = m.FromClock.Size()
-		n += 1 + l + sovMiniappsregistry(uint64(l))
+	if m.FromClock != 0 {
+		n += 1 + sovMiniappsregistry(uint64(m.FromClock))
 	}
 	return n
 }
@@ -1152,6 +1600,32 @@ func (m *FindAppResponse) Size() (n int) {
 	return n
 }
 
+func (m *IssueAccessTokenRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.AppId != nil {
+		l = m.AppId.Size()
+		n += 1 + l + sovMiniappsregistry(uint64(l))
+	}
+	return n
+}
+
+func (m *AccessTokenResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.AccessToken)
+	if l > 0 {
+		n += 1 + l + sovMiniappsregistry(uint64(l))
+	}
+	return n
+}
+
 func sovMiniappsregistry(x uint64) (n int) {
 	return (math_bits.Len64(x|1) + 6) / 7
 }
@@ -1178,12 +1652,23 @@ func (this *MiniApp) String() string {
 	}, "")
 	return s
 }
+func (this *UpdateMiniApp) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&UpdateMiniApp{`,
+		`AppLifecycle:` + fmt.Sprintf("%v", this.AppLifecycle) + `,`,
+		`AppData:` + strings.Replace(this.AppData.String(), "MiniApp", "MiniApp", 1) + `,`,
+		`}`,
+	}, "")
+	return s
+}
 func (this *GetAppsRequest) String() string {
 	if this == nil {
 		return "nil"
 	}
 	s := strings.Join([]string{`&GetAppsRequest{`,
-		`FromClock:` + strings.Replace(fmt.Sprintf("%v", this.FromClock), "Int64Value", "types.Int64Value", 1) + `,`,
+		`FromClock:` + fmt.Sprintf("%v", this.FromClock) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -1220,6 +1705,26 @@ func (this *FindAppResponse) String() string {
 	}
 	s := strings.Join([]string{`&FindAppResponse{`,
 		`App:` + strings.Replace(this.App.String(), "MiniApp", "MiniApp", 1) + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *IssueAccessTokenRequest) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&IssueAccessTokenRequest{`,
+		`AppId:` + strings.Replace(fmt.Sprintf("%v", this.AppId), "UUIDValue", "UUIDValue", 1) + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *AccessTokenResponse) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&AccessTokenResponse{`,
+		`AccessToken:` + fmt.Sprintf("%v", this.AccessToken) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -1594,6 +2099,114 @@ func (m *MiniApp) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
+func (m *UpdateMiniApp) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowMiniappsregistry
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: UpdateMiniApp: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: UpdateMiniApp: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AppLifecycle", wireType)
+			}
+			m.AppLifecycle = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMiniappsregistry
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.AppLifecycle |= UpdateMiniApp_AppLifecycle(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AppData", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMiniappsregistry
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.AppData == nil {
+				m.AppData = &MiniApp{}
+			}
+			if err := m.AppData.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipMiniappsregistry(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
 func (m *GetAppsRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -1624,10 +2237,10 @@ func (m *GetAppsRequest) Unmarshal(dAtA []byte) error {
 		}
 		switch fieldNum {
 		case 1:
-			if wireType != 2 {
+			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field FromClock", wireType)
 			}
-			var msglen int
+			m.FromClock = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowMiniappsregistry
@@ -1637,28 +2250,11 @@ func (m *GetAppsRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= int(b&0x7F) << shift
+				m.FromClock |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			if msglen < 0 {
-				return ErrInvalidLengthMiniappsregistry
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthMiniappsregistry
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.FromClock == nil {
-				m.FromClock = &types.Int64Value{}
-			}
-			if err := m.FromClock.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipMiniappsregistry(dAtA[iNdEx:])
@@ -1938,6 +2534,180 @@ func (m *FindAppResponse) Unmarshal(dAtA []byte) error {
 			if err := m.App.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipMiniappsregistry(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *IssueAccessTokenRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowMiniappsregistry
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: IssueAccessTokenRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: IssueAccessTokenRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AppId", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMiniappsregistry
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.AppId == nil {
+				m.AppId = &UUIDValue{}
+			}
+			if err := m.AppId.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipMiniappsregistry(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *AccessTokenResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowMiniappsregistry
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: AccessTokenResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: AccessTokenResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AccessToken", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMiniappsregistry
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.AccessToken = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
