@@ -905,7 +905,7 @@ func (m *RequestValidatePassword) GetPassword() string {
 	return ""
 }
 
-// Loading OAuth2 Parameters - deprecated
+// Loading OAuth2 Parameters
 type RequestGetOAuth2Params struct {
 	TransactionHash string `protobuf:"bytes,1,opt,name=transaction_hash,json=transactionHash,proto3" json:"transaction_hash,omitempty"`
 	RedirectUrl     string `protobuf:"bytes,2,opt,name=redirect_url,json=redirectUrl,proto3" json:"redirect_url,omitempty"`
@@ -957,7 +957,7 @@ func (m *RequestGetOAuth2Params) GetRedirectUrl() string {
 	return ""
 }
 
-/// Deprecated
+/// Redirect url result
 type ResponseGetOAuth2Params struct {
 	AuthUrl string `protobuf:"bytes,1,opt,name=auth_url,json=authUrl,proto3" json:"auth_url,omitempty"`
 }
@@ -1001,7 +1001,7 @@ func (m *ResponseGetOAuth2Params) GetAuthUrl() string {
 	return ""
 }
 
-// Complete OAuth2 Authentication - deprecated
+// Complete OAuth2 Authentication
 type RequestCompleteOAuth2 struct {
 	TransactionHash string `protobuf:"bytes,1,opt,name=transaction_hash,json=transactionHash,proto3" json:"transaction_hash,omitempty"`
 	Code            string `protobuf:"bytes,2,opt,name=code,proto3" json:"code,omitempty"`
@@ -4155,9 +4155,9 @@ type AuthenticationClient interface {
 	ResendCode(ctx context.Context, in *RequestResendCode, opts ...grpc.CallOption) (*ResponseVoid, error)
 	/// Validate your passwword
 	ValidatePassword(ctx context.Context, in *RequestValidatePassword, opts ...grpc.CallOption) (*ResponseAuth, error)
-	/// Deprecated
+	/// Get redirect url
 	GetOAuth2Params(ctx context.Context, in *RequestGetOAuth2Params, opts ...grpc.CallOption) (*ResponseGetOAuth2Params, error)
-	/// Deprecated
+	/// Complete OAuth2 Authentication
 	CompleteOAuth2(ctx context.Context, in *RequestCompleteOAuth2, opts ...grpc.CallOption) (*ResponseAuth, error)
 	/// Sign up existed user
 	SignUp(ctx context.Context, in *RequestSignUp, opts ...grpc.CallOption) (*ResponseAuth, error)
@@ -4418,9 +4418,9 @@ type AuthenticationServer interface {
 	ResendCode(context.Context, *RequestResendCode) (*ResponseVoid, error)
 	/// Validate your passwword
 	ValidatePassword(context.Context, *RequestValidatePassword) (*ResponseAuth, error)
-	/// Deprecated
+	/// Get redirect url
 	GetOAuth2Params(context.Context, *RequestGetOAuth2Params) (*ResponseGetOAuth2Params, error)
-	/// Deprecated
+	/// Complete OAuth2 Authentication
 	CompleteOAuth2(context.Context, *RequestCompleteOAuth2) (*ResponseAuth, error)
 	/// Sign up existed user
 	SignUp(context.Context, *RequestSignUp) (*ResponseAuth, error)
