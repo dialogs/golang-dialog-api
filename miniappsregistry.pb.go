@@ -7,6 +7,7 @@ import (
 	context "context"
 	fmt "fmt"
 	proto "github.com/gogo/protobuf/proto"
+	github_com_gogo_protobuf_sortkeys "github.com/gogo/protobuf/sortkeys"
 	types "github.com/gogo/protobuf/types"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
@@ -98,14 +99,14 @@ type MiniApp struct {
 	Icon string `protobuf:"bytes,6,opt,name=icon,proto3" json:"icon,omitempty"`
 	// link to this app
 	Link string `protobuf:"bytes,7,opt,name=link,proto3" json:"link,omitempty"`
-	// additional data stored in json format
-	JsonContent *types.StringValue `protobuf:"bytes,8,opt,name=json_content,json=jsonContent,proto3" json:"json_content,omitempty"`
-	// creation date/time in millis
-	CreatedAtTs int64 `protobuf:"varint,9,opt,name=created_at_ts,json=createdAtTs,proto3" json:"created_at_ts,omitempty"`
 	// update date/time in millis
 	ModifiedAtTs int64 `protobuf:"varint,10,opt,name=modified_at_ts,json=modifiedAtTs,proto3" json:"modified_at_ts,omitempty"`
 	// specifies if this app enabled and user can use it, ot not
 	IsEnabled bool `protobuf:"varint,11,opt,name=is_enabled,json=isEnabled,proto3" json:"is_enabled,omitempty"`
+	// supported locales
+	Locales map[string]string `protobuf:"bytes,12,rep,name=locales,proto3" json:"locales,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	// application-level permissions
+	Permissions []string `protobuf:"bytes,13,rep,name=permissions,proto3" json:"permissions,omitempty"`
 }
 
 func (m *MiniApp) Reset()      { *m = MiniApp{} }
@@ -189,20 +190,6 @@ func (m *MiniApp) GetLink() string {
 	return ""
 }
 
-func (m *MiniApp) GetJsonContent() *types.StringValue {
-	if m != nil {
-		return m.JsonContent
-	}
-	return nil
-}
-
-func (m *MiniApp) GetCreatedAtTs() int64 {
-	if m != nil {
-		return m.CreatedAtTs
-	}
-	return 0
-}
-
 func (m *MiniApp) GetModifiedAtTs() int64 {
 	if m != nil {
 		return m.ModifiedAtTs
@@ -215,6 +202,20 @@ func (m *MiniApp) GetIsEnabled() bool {
 		return m.IsEnabled
 	}
 	return false
+}
+
+func (m *MiniApp) GetLocales() map[string]string {
+	if m != nil {
+		return m.Locales
+	}
+	return nil
+}
+
+func (m *MiniApp) GetPermissions() []string {
+	if m != nil {
+		return m.Permissions
+	}
+	return nil
 }
 
 // App update
@@ -549,10 +550,436 @@ func (m *AccessTokenResponse) GetAccessToken() string {
 	return ""
 }
 
+type GetExtensionsResponse struct {
+	MessageExtensions []*ExtensionPoint `protobuf:"bytes,1,rep,name=message_extensions,json=messageExtensions,proto3" json:"message_extensions,omitempty"`
+	ChatExtensions    []*ExtensionPoint `protobuf:"bytes,2,rep,name=chat_extensions,json=chatExtensions,proto3" json:"chat_extensions,omitempty"`
+}
+
+func (m *GetExtensionsResponse) Reset()      { *m = GetExtensionsResponse{} }
+func (*GetExtensionsResponse) ProtoMessage() {}
+func (*GetExtensionsResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_6320f0162bfbffc9, []int{8}
+}
+func (m *GetExtensionsResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GetExtensionsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GetExtensionsResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *GetExtensionsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetExtensionsResponse.Merge(m, src)
+}
+func (m *GetExtensionsResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *GetExtensionsResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetExtensionsResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GetExtensionsResponse proto.InternalMessageInfo
+
+func (m *GetExtensionsResponse) GetMessageExtensions() []*ExtensionPoint {
+	if m != nil {
+		return m.MessageExtensions
+	}
+	return nil
+}
+
+func (m *GetExtensionsResponse) GetChatExtensions() []*ExtensionPoint {
+	if m != nil {
+		return m.ChatExtensions
+	}
+	return nil
+}
+
+type ExtensionPoint struct {
+	AppId  *UUIDValue `protobuf:"bytes,1,opt,name=app_id,json=appId,proto3" json:"app_id,omitempty"`
+	Action string     `protobuf:"bytes,2,opt,name=action,proto3" json:"action,omitempty"`
+	Label  string     `protobuf:"bytes,3,opt,name=label,proto3" json:"label,omitempty"`
+	// Types that are valid to be assigned to Conditions:
+	//	*ExtensionPoint_MessageConditions
+	//	*ExtensionPoint_GroupConditions
+	Conditions isExtensionPoint_Conditions `protobuf_oneof:"conditions"`
+}
+
+func (m *ExtensionPoint) Reset()      { *m = ExtensionPoint{} }
+func (*ExtensionPoint) ProtoMessage() {}
+func (*ExtensionPoint) Descriptor() ([]byte, []int) {
+	return fileDescriptor_6320f0162bfbffc9, []int{9}
+}
+func (m *ExtensionPoint) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *ExtensionPoint) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_ExtensionPoint.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *ExtensionPoint) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ExtensionPoint.Merge(m, src)
+}
+func (m *ExtensionPoint) XXX_Size() int {
+	return m.Size()
+}
+func (m *ExtensionPoint) XXX_DiscardUnknown() {
+	xxx_messageInfo_ExtensionPoint.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ExtensionPoint proto.InternalMessageInfo
+
+type isExtensionPoint_Conditions interface {
+	isExtensionPoint_Conditions()
+	Equal(interface{}) bool
+	MarshalTo([]byte) (int, error)
+	Size() int
+}
+
+type ExtensionPoint_MessageConditions struct {
+	MessageConditions *MessageConditions `protobuf:"bytes,4,opt,name=message_conditions,json=messageConditions,proto3,oneof" json:"message_conditions,omitempty"`
+}
+type ExtensionPoint_GroupConditions struct {
+	GroupConditions *GroupConditions `protobuf:"bytes,5,opt,name=group_conditions,json=groupConditions,proto3,oneof" json:"group_conditions,omitempty"`
+}
+
+func (*ExtensionPoint_MessageConditions) isExtensionPoint_Conditions() {}
+func (*ExtensionPoint_GroupConditions) isExtensionPoint_Conditions()   {}
+
+func (m *ExtensionPoint) GetConditions() isExtensionPoint_Conditions {
+	if m != nil {
+		return m.Conditions
+	}
+	return nil
+}
+
+func (m *ExtensionPoint) GetAppId() *UUIDValue {
+	if m != nil {
+		return m.AppId
+	}
+	return nil
+}
+
+func (m *ExtensionPoint) GetAction() string {
+	if m != nil {
+		return m.Action
+	}
+	return ""
+}
+
+func (m *ExtensionPoint) GetLabel() string {
+	if m != nil {
+		return m.Label
+	}
+	return ""
+}
+
+func (m *ExtensionPoint) GetMessageConditions() *MessageConditions {
+	if x, ok := m.GetConditions().(*ExtensionPoint_MessageConditions); ok {
+		return x.MessageConditions
+	}
+	return nil
+}
+
+func (m *ExtensionPoint) GetGroupConditions() *GroupConditions {
+	if x, ok := m.GetConditions().(*ExtensionPoint_GroupConditions); ok {
+		return x.GroupConditions
+	}
+	return nil
+}
+
+// XXX_OneofWrappers is for the internal use of the proto package.
+func (*ExtensionPoint) XXX_OneofWrappers() []interface{} {
+	return []interface{}{
+		(*ExtensionPoint_MessageConditions)(nil),
+		(*ExtensionPoint_GroupConditions)(nil),
+	}
+}
+
+type MessageConditions struct {
+	MessageCondition []*MessageConditions_MessageCondition `protobuf:"bytes,1,rep,name=message_condition,json=messageCondition,proto3" json:"message_condition,omitempty"`
+}
+
+func (m *MessageConditions) Reset()      { *m = MessageConditions{} }
+func (*MessageConditions) ProtoMessage() {}
+func (*MessageConditions) Descriptor() ([]byte, []int) {
+	return fileDescriptor_6320f0162bfbffc9, []int{10}
+}
+func (m *MessageConditions) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MessageConditions) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MessageConditions.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MessageConditions) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MessageConditions.Merge(m, src)
+}
+func (m *MessageConditions) XXX_Size() int {
+	return m.Size()
+}
+func (m *MessageConditions) XXX_DiscardUnknown() {
+	xxx_messageInfo_MessageConditions.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MessageConditions proto.InternalMessageInfo
+
+func (m *MessageConditions) GetMessageCondition() []*MessageConditions_MessageCondition {
+	if m != nil {
+		return m.MessageCondition
+	}
+	return nil
+}
+
+type MessageConditions_MessageCondition struct {
+	TextMessage     string                                                `protobuf:"bytes,1,opt,name=text_message,json=textMessage,proto3" json:"text_message,omitempty"`
+	DocumentMessage *MessageConditions_MessageCondition_DocumentCondition `protobuf:"bytes,2,opt,name=document_message,json=documentMessage,proto3" json:"document_message,omitempty"`
+}
+
+func (m *MessageConditions_MessageCondition) Reset()      { *m = MessageConditions_MessageCondition{} }
+func (*MessageConditions_MessageCondition) ProtoMessage() {}
+func (*MessageConditions_MessageCondition) Descriptor() ([]byte, []int) {
+	return fileDescriptor_6320f0162bfbffc9, []int{10, 0}
+}
+func (m *MessageConditions_MessageCondition) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MessageConditions_MessageCondition) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MessageConditions_MessageCondition.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MessageConditions_MessageCondition) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MessageConditions_MessageCondition.Merge(m, src)
+}
+func (m *MessageConditions_MessageCondition) XXX_Size() int {
+	return m.Size()
+}
+func (m *MessageConditions_MessageCondition) XXX_DiscardUnknown() {
+	xxx_messageInfo_MessageConditions_MessageCondition.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MessageConditions_MessageCondition proto.InternalMessageInfo
+
+func (m *MessageConditions_MessageCondition) GetTextMessage() string {
+	if m != nil {
+		return m.TextMessage
+	}
+	return ""
+}
+
+func (m *MessageConditions_MessageCondition) GetDocumentMessage() *MessageConditions_MessageCondition_DocumentCondition {
+	if m != nil {
+		return m.DocumentMessage
+	}
+	return nil
+}
+
+type MessageConditions_MessageCondition_DocumentCondition struct {
+	IsImage  bool     `protobuf:"varint,1,opt,name=is_image,json=isImage,proto3" json:"is_image,omitempty"`
+	IsVideo  bool     `protobuf:"varint,2,opt,name=is_video,json=isVideo,proto3" json:"is_video,omitempty"`
+	IsAudio  bool     `protobuf:"varint,3,opt,name=is_audio,json=isAudio,proto3" json:"is_audio,omitempty"`
+	MimeType []string `protobuf:"bytes,4,rep,name=mime_type,json=mimeType,proto3" json:"mime_type,omitempty"`
+}
+
+func (m *MessageConditions_MessageCondition_DocumentCondition) Reset() {
+	*m = MessageConditions_MessageCondition_DocumentCondition{}
+}
+func (*MessageConditions_MessageCondition_DocumentCondition) ProtoMessage() {}
+func (*MessageConditions_MessageCondition_DocumentCondition) Descriptor() ([]byte, []int) {
+	return fileDescriptor_6320f0162bfbffc9, []int{10, 0, 0}
+}
+func (m *MessageConditions_MessageCondition_DocumentCondition) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MessageConditions_MessageCondition_DocumentCondition) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MessageConditions_MessageCondition_DocumentCondition.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MessageConditions_MessageCondition_DocumentCondition) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MessageConditions_MessageCondition_DocumentCondition.Merge(m, src)
+}
+func (m *MessageConditions_MessageCondition_DocumentCondition) XXX_Size() int {
+	return m.Size()
+}
+func (m *MessageConditions_MessageCondition_DocumentCondition) XXX_DiscardUnknown() {
+	xxx_messageInfo_MessageConditions_MessageCondition_DocumentCondition.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MessageConditions_MessageCondition_DocumentCondition proto.InternalMessageInfo
+
+func (m *MessageConditions_MessageCondition_DocumentCondition) GetIsImage() bool {
+	if m != nil {
+		return m.IsImage
+	}
+	return false
+}
+
+func (m *MessageConditions_MessageCondition_DocumentCondition) GetIsVideo() bool {
+	if m != nil {
+		return m.IsVideo
+	}
+	return false
+}
+
+func (m *MessageConditions_MessageCondition_DocumentCondition) GetIsAudio() bool {
+	if m != nil {
+		return m.IsAudio
+	}
+	return false
+}
+
+func (m *MessageConditions_MessageCondition_DocumentCondition) GetMimeType() []string {
+	if m != nil {
+		return m.MimeType
+	}
+	return nil
+}
+
+type GroupConditions struct {
+	GroupCondition []*GroupConditions_GroupCondition `protobuf:"bytes,1,rep,name=group_condition,json=groupCondition,proto3" json:"group_condition,omitempty"`
+}
+
+func (m *GroupConditions) Reset()      { *m = GroupConditions{} }
+func (*GroupConditions) ProtoMessage() {}
+func (*GroupConditions) Descriptor() ([]byte, []int) {
+	return fileDescriptor_6320f0162bfbffc9, []int{11}
+}
+func (m *GroupConditions) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GroupConditions) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GroupConditions.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *GroupConditions) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GroupConditions.Merge(m, src)
+}
+func (m *GroupConditions) XXX_Size() int {
+	return m.Size()
+}
+func (m *GroupConditions) XXX_DiscardUnknown() {
+	xxx_messageInfo_GroupConditions.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GroupConditions proto.InternalMessageInfo
+
+func (m *GroupConditions) GetGroupCondition() []*GroupConditions_GroupCondition {
+	if m != nil {
+		return m.GroupCondition
+	}
+	return nil
+}
+
+type GroupConditions_GroupCondition struct {
+	GroupType  string   `protobuf:"bytes,1,opt,name=group_type,json=groupType,proto3" json:"group_type,omitempty"`
+	Visibility string   `protobuf:"bytes,2,opt,name=visibility,proto3" json:"visibility,omitempty"`
+	Permission []string `protobuf:"bytes,3,rep,name=permission,proto3" json:"permission,omitempty"`
+}
+
+func (m *GroupConditions_GroupCondition) Reset()      { *m = GroupConditions_GroupCondition{} }
+func (*GroupConditions_GroupCondition) ProtoMessage() {}
+func (*GroupConditions_GroupCondition) Descriptor() ([]byte, []int) {
+	return fileDescriptor_6320f0162bfbffc9, []int{11, 0}
+}
+func (m *GroupConditions_GroupCondition) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GroupConditions_GroupCondition) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GroupConditions_GroupCondition.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *GroupConditions_GroupCondition) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GroupConditions_GroupCondition.Merge(m, src)
+}
+func (m *GroupConditions_GroupCondition) XXX_Size() int {
+	return m.Size()
+}
+func (m *GroupConditions_GroupCondition) XXX_DiscardUnknown() {
+	xxx_messageInfo_GroupConditions_GroupCondition.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GroupConditions_GroupCondition proto.InternalMessageInfo
+
+func (m *GroupConditions_GroupCondition) GetGroupType() string {
+	if m != nil {
+		return m.GroupType
+	}
+	return ""
+}
+
+func (m *GroupConditions_GroupCondition) GetVisibility() string {
+	if m != nil {
+		return m.Visibility
+	}
+	return ""
+}
+
+func (m *GroupConditions_GroupCondition) GetPermission() []string {
+	if m != nil {
+		return m.Permission
+	}
+	return nil
+}
+
 func init() {
 	proto.RegisterEnum("dialog.AppType", AppType_name, AppType_value)
 	proto.RegisterEnum("dialog.UpdateMiniApp_AppLifecycle", UpdateMiniApp_AppLifecycle_name, UpdateMiniApp_AppLifecycle_value)
 	proto.RegisterType((*MiniApp)(nil), "dialog.MiniApp")
+	proto.RegisterMapType((map[string]string)(nil), "dialog.MiniApp.LocalesEntry")
 	proto.RegisterType((*UpdateMiniApp)(nil), "dialog.UpdateMiniApp")
 	proto.RegisterType((*GetAppsRequest)(nil), "dialog.GetAppsRequest")
 	proto.RegisterType((*GetAppsResponse)(nil), "dialog.GetAppsResponse")
@@ -560,62 +987,95 @@ func init() {
 	proto.RegisterType((*FindAppResponse)(nil), "dialog.FindAppResponse")
 	proto.RegisterType((*IssueAccessTokenRequest)(nil), "dialog.IssueAccessTokenRequest")
 	proto.RegisterType((*AccessTokenResponse)(nil), "dialog.AccessTokenResponse")
+	proto.RegisterType((*GetExtensionsResponse)(nil), "dialog.GetExtensionsResponse")
+	proto.RegisterType((*ExtensionPoint)(nil), "dialog.ExtensionPoint")
+	proto.RegisterType((*MessageConditions)(nil), "dialog.MessageConditions")
+	proto.RegisterType((*MessageConditions_MessageCondition)(nil), "dialog.MessageConditions.MessageCondition")
+	proto.RegisterType((*MessageConditions_MessageCondition_DocumentCondition)(nil), "dialog.MessageConditions.MessageCondition.DocumentCondition")
+	proto.RegisterType((*GroupConditions)(nil), "dialog.GroupConditions")
+	proto.RegisterType((*GroupConditions_GroupCondition)(nil), "dialog.GroupConditions.GroupCondition")
 }
 
 func init() { proto.RegisterFile("miniappsregistry.proto", fileDescriptor_6320f0162bfbffc9) }
 
 var fileDescriptor_6320f0162bfbffc9 = []byte{
-	// 795 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x74, 0x54, 0xcf, 0x6e, 0xdb, 0x36,
-	0x1c, 0x36, 0xed, 0x24, 0x8e, 0x7f, 0x76, 0x1c, 0x97, 0x6b, 0x1b, 0x2d, 0xdb, 0x34, 0x57, 0x2b,
-	0x30, 0xa3, 0x07, 0x07, 0xc8, 0x7a, 0x18, 0x7a, 0x19, 0x14, 0x5b, 0x2d, 0x8c, 0x79, 0x59, 0xa0,
-	0xc6, 0x0d, 0x76, 0x12, 0x18, 0x89, 0x36, 0xb8, 0x28, 0x14, 0x27, 0x32, 0x1d, 0x72, 0xdb, 0x23,
-	0x6c, 0x6f, 0xb1, 0x37, 0xd8, 0x2b, 0xec, 0x98, 0x63, 0x8f, 0x8b, 0x73, 0xd9, 0xb1, 0xe7, 0x9d,
-	0x06, 0x52, 0x94, 0x13, 0xd7, 0xe9, 0x8d, 0xfc, 0x7e, 0xdf, 0xef, 0xdf, 0xf7, 0x81, 0x84, 0xc7,
-	0xe7, 0x8c, 0x33, 0x22, 0x84, 0xcc, 0xe9, 0x8c, 0x49, 0x95, 0x5f, 0xf6, 0x45, 0x9e, 0xa9, 0x0c,
-	0x6f, 0x24, 0x8c, 0xa4, 0xd9, 0x6c, 0xd7, 0x9d, 0x65, 0xd9, 0x2c, 0xa5, 0x7b, 0x06, 0x3d, 0xbd,
-	0x98, 0xee, 0xfd, 0x9a, 0x13, 0x21, 0x68, 0x2e, 0x0b, 0xde, 0xee, 0x83, 0x84, 0x4e, 0x19, 0x67,
-	0x8a, 0x65, 0xdc, 0x42, 0xde, 0x7f, 0x55, 0xa8, 0xff, 0xc0, 0x38, 0xf3, 0x85, 0xc0, 0x4f, 0xa0,
-	0xca, 0x12, 0x07, 0x75, 0x51, 0xaf, 0xb9, 0xff, 0xa0, 0x5f, 0xd4, 0xec, 0x4f, 0x26, 0xa3, 0xe1,
-	0x1b, 0x92, 0x5e, 0xd0, 0xb0, 0xca, 0x12, 0xfc, 0x0c, 0x36, 0x89, 0x10, 0x91, 0xba, 0x14, 0xd4,
-	0xa9, 0x76, 0x51, 0xaf, 0xbd, 0xbf, 0x5d, 0x12, 0x7d, 0x21, 0x8e, 0x2f, 0x05, 0x0d, 0xeb, 0xa4,
-	0x38, 0x60, 0x0c, 0x6b, 0x9c, 0x9c, 0x53, 0xa7, 0xd6, 0x45, 0xbd, 0x46, 0x68, 0xce, 0xb8, 0x0b,
-	0xcd, 0x84, 0xca, 0x38, 0x67, 0x42, 0x0f, 0xe1, 0xac, 0x99, 0xd0, 0x5d, 0x08, 0x3b, 0x50, 0x7f,
-	0x4b, 0x73, 0xa9, 0xa3, 0xeb, 0x26, 0x5a, 0x5e, 0x75, 0x3d, 0x16, 0x67, 0xdc, 0xd9, 0x28, 0xea,
-	0xe9, 0xb3, 0xc6, 0x52, 0xc6, 0xcf, 0x9c, 0x7a, 0x81, 0xe9, 0x33, 0xfe, 0x0e, 0x5a, 0x3f, 0xcb,
-	0x8c, 0x47, 0x71, 0xc6, 0x15, 0xe5, 0xca, 0xd9, 0x34, 0x0b, 0x7d, 0xde, 0x2f, 0xc4, 0xe9, 0x97,
-	0xe2, 0xf4, 0x5f, 0xab, 0x9c, 0xf1, 0x59, 0xb1, 0x5b, 0x53, 0x67, 0x0c, 0x8a, 0x04, 0xec, 0xc1,
-	0x56, 0x9c, 0x53, 0xa2, 0x68, 0x12, 0x11, 0x15, 0x29, 0xe9, 0x34, 0xba, 0xa8, 0x57, 0x0b, 0x9b,
-	0x16, 0xf4, 0xd5, 0xb1, 0xc4, 0x4f, 0xa1, 0x7d, 0x9e, 0x25, 0x6c, 0xca, 0x16, 0x24, 0x30, 0xa4,
-	0x56, 0x89, 0x1a, 0xd6, 0x17, 0x00, 0x4c, 0x46, 0x94, 0x93, 0xd3, 0x94, 0x26, 0x4e, 0xb3, 0x8b,
-	0x7a, 0x9b, 0x61, 0x83, 0xc9, 0xa0, 0x00, 0xbc, 0xbf, 0xaa, 0xb0, 0x35, 0x11, 0x09, 0x51, 0xb4,
-	0xb4, 0xe0, 0x15, 0x6c, 0x69, 0x7d, 0x53, 0x36, 0xa5, 0xf1, 0x65, 0x9c, 0x52, 0xe3, 0x46, 0x7b,
-	0xdf, 0x5b, 0xb8, 0x71, 0x97, 0xad, 0x25, 0x1f, 0x97, 0xcc, 0xb0, 0x45, 0xee, 0xdc, 0x4a, 0xa3,
-	0x12, 0xa2, 0x88, 0x31, 0xaa, 0x79, 0x6b, 0x94, 0xcd, 0x36, 0x46, 0x0d, 0x89, 0x22, 0x7a, 0x4a,
-	0x91, 0xd3, 0xb7, 0x51, 0x9c, 0x66, 0xf1, 0x99, 0xb1, 0xab, 0x16, 0x36, 0x34, 0x32, 0xd0, 0x80,
-	0xf7, 0x07, 0x82, 0xd6, 0xdd, 0x4e, 0xd8, 0x81, 0x87, 0xfe, 0xd1, 0xd1, 0x78, 0xf4, 0x32, 0x18,
-	0xfc, 0x34, 0x18, 0x07, 0xd1, 0x20, 0x0c, 0xfc, 0xe3, 0x60, 0xd8, 0xa9, 0xac, 0x44, 0x26, 0x47,
-	0x43, 0x13, 0x41, 0x2b, 0x91, 0xe0, 0xd0, 0x3f, 0x18, 0x07, 0xc3, 0x4e, 0x15, 0x7f, 0x0a, 0x8f,
-	0x96, 0x22, 0xc3, 0xd1, 0xeb, 0x22, 0x54, 0x5b, 0x49, 0x1a, 0x06, 0xe3, 0x40, 0x97, 0x5b, 0xf3,
-	0xf6, 0xa0, 0xfd, 0x8a, 0x2a, 0x5f, 0x08, 0x19, 0xd2, 0x5f, 0x2e, 0xa8, 0x54, 0x7a, 0x89, 0x69,
-	0x9e, 0x9d, 0xdb, 0x25, 0x50, 0xb1, 0x84, 0x46, 0x8a, 0x25, 0xc6, 0xb0, 0xbd, 0x48, 0x90, 0x22,
-	0xe3, 0x92, 0xe2, 0xaf, 0x60, 0x4d, 0xbf, 0x25, 0x07, 0x75, 0x6b, 0xf7, 0xc9, 0x63, 0x82, 0xf8,
-	0x21, 0xac, 0x17, 0x15, 0xab, 0xa6, 0x62, 0x71, 0xf1, 0xbe, 0x86, 0xf6, 0x4b, 0xc6, 0x13, 0x4d,
-	0xb3, 0xed, 0x1f, 0xc1, 0x86, 0xd6, 0xdb, 0xbe, 0x9f, 0x46, 0xb8, 0x4e, 0x84, 0x18, 0x25, 0xde,
-	0x73, 0xd8, 0x5e, 0x10, 0x6d, 0xdb, 0x27, 0x50, 0x23, 0x42, 0xd8, 0x67, 0xb6, 0xd2, 0x55, 0xc7,
-	0xbc, 0x01, 0xec, 0x8c, 0xa4, 0xbc, 0xa0, 0x7e, 0x1c, 0x53, 0x29, 0x8f, 0xb3, 0x33, 0xca, 0xcb,
-	0x3e, 0xbd, 0xa5, 0x3e, 0xf7, 0xbe, 0x53, 0xdb, 0xfa, 0x5b, 0xf8, 0x64, 0x29, 0x7f, 0xd1, 0xbe,
-	0x45, 0x0c, 0x1c, 0x29, 0x8d, 0xdb, 0x71, 0x9b, 0xe4, 0x96, 0xfa, 0xec, 0x29, 0xd4, 0xed, 0x63,
-	0xc6, 0x4d, 0xa8, 0x4f, 0x0e, 0xbf, 0x3f, 0xfc, 0xf1, 0xe4, 0xb0, 0x53, 0xc1, 0x2d, 0xd8, 0x3c,
-	0x09, 0x0e, 0xa2, 0x37, 0xa3, 0xe0, 0xa4, 0x83, 0xf6, 0x6f, 0x10, 0xec, 0x0c, 0x52, 0x46, 0xb9,
-	0x92, 0x76, 0x78, 0x19, 0xda, 0x6f, 0x09, 0xbf, 0x80, 0xba, 0x5d, 0x1b, 0x3f, 0x2e, 0x07, 0x5c,
-	0x16, 0x6c, 0x77, 0x67, 0x05, 0xb7, 0x03, 0xbe, 0x80, 0xba, 0x75, 0xea, 0x36, 0x77, 0xd9, 0xeb,
-	0xdb, 0xdc, 0x0f, 0x2d, 0x3d, 0x82, 0xce, 0x87, 0xc2, 0xe1, 0x2f, 0x4b, 0xf2, 0x47, 0x24, 0xdd,
-	0xfd, 0x6c, 0xf1, 0x83, 0xad, 0xca, 0x75, 0xf0, 0xfc, 0xea, 0xda, 0xad, 0xbc, 0xbb, 0x76, 0x2b,
-	0xef, 0xaf, 0x5d, 0xf4, 0xdb, 0xdc, 0x45, 0x7f, 0xce, 0x5d, 0xf4, 0xf7, 0xdc, 0x45, 0x57, 0x73,
-	0x17, 0xfd, 0x33, 0x77, 0xd1, 0xbf, 0x73, 0xb7, 0xf2, 0x7e, 0xee, 0xa2, 0xdf, 0x6f, 0xdc, 0xca,
-	0xd5, 0x8d, 0x5b, 0x79, 0x77, 0xe3, 0x56, 0x4e, 0x37, 0xcc, 0x27, 0xf3, 0xcd, 0xff, 0x01, 0x00,
-	0x00, 0xff, 0xff, 0xa9, 0x47, 0x6a, 0xce, 0xb1, 0x05, 0x00, 0x00,
+	// 1212 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x56, 0x4f, 0x6f, 0x1b, 0x45,
+	0x14, 0xf7, 0xda, 0x4e, 0x6c, 0x3f, 0x3b, 0xb6, 0x33, 0xb4, 0xc9, 0xd6, 0xa5, 0x8b, 0x6b, 0x2a,
+	0xb0, 0x7a, 0x70, 0xa5, 0x50, 0xa1, 0x2a, 0x42, 0x42, 0x8e, 0xbd, 0x0d, 0x2e, 0x26, 0x8d, 0x96,
+	0xa4, 0x11, 0x27, 0x6b, 0xb2, 0x3b, 0x31, 0xa3, 0xac, 0x77, 0x87, 0x9d, 0x75, 0xa8, 0x6f, 0x70,
+	0xe3, 0x48, 0x3f, 0x01, 0x12, 0x27, 0x24, 0x3e, 0x40, 0xbf, 0x02, 0xc7, 0x4a, 0x5c, 0x7a, 0xa4,
+	0xee, 0x85, 0x63, 0x3f, 0x02, 0x9a, 0xd9, 0xd9, 0x5d, 0xff, 0x69, 0x51, 0x6f, 0xf3, 0x7e, 0xbf,
+	0xf7, 0x77, 0xde, 0xcc, 0x9b, 0x81, 0x9d, 0x09, 0xf5, 0x28, 0x66, 0x8c, 0x07, 0x64, 0x4c, 0x79,
+	0x18, 0xcc, 0x3a, 0x2c, 0xf0, 0x43, 0x1f, 0x6d, 0x3a, 0x14, 0xbb, 0xfe, 0xb8, 0x71, 0x73, 0xec,
+	0xfb, 0x63, 0x97, 0xdc, 0x93, 0xe8, 0xf9, 0xf4, 0xe2, 0x1e, 0x99, 0xb0, 0x50, 0x29, 0x35, 0x8c,
+	0x55, 0xf2, 0xc7, 0x00, 0x33, 0x46, 0x02, 0xae, 0xf8, 0x6d, 0x87, 0x5c, 0x50, 0x8f, 0x86, 0xd4,
+	0xf7, 0x14, 0xd4, 0x7a, 0x9e, 0x83, 0xc2, 0x37, 0xd4, 0xa3, 0x5d, 0xc6, 0xd0, 0x6d, 0xc8, 0x52,
+	0x47, 0xd7, 0x9a, 0x5a, 0xbb, 0xbc, 0xb7, 0xdd, 0x89, 0x02, 0x76, 0x4e, 0x4f, 0x07, 0xfd, 0x27,
+	0xd8, 0x9d, 0x12, 0x2b, 0x4b, 0x1d, 0x74, 0x17, 0x8a, 0x98, 0xb1, 0x51, 0x38, 0x63, 0x44, 0xcf,
+	0x36, 0xb5, 0x76, 0x75, 0xaf, 0x16, 0x2b, 0x76, 0x19, 0x3b, 0x99, 0x31, 0x62, 0x15, 0x70, 0xb4,
+	0x40, 0x08, 0xf2, 0x1e, 0x9e, 0x10, 0x3d, 0xd7, 0xd4, 0xda, 0x25, 0x4b, 0xae, 0x51, 0x13, 0xca,
+	0x0e, 0xe1, 0x76, 0x40, 0x99, 0x48, 0x42, 0xcf, 0x4b, 0x6a, 0x11, 0x42, 0x3a, 0x14, 0xae, 0x48,
+	0xc0, 0x05, 0xbb, 0x21, 0xd9, 0x58, 0x14, 0xfe, 0xa8, 0xed, 0x7b, 0xfa, 0x66, 0xe4, 0x4f, 0xac,
+	0x05, 0xe6, 0x52, 0xef, 0x52, 0x2f, 0x44, 0x98, 0x58, 0xa3, 0x3b, 0x50, 0x9d, 0xf8, 0x0e, 0xbd,
+	0xa0, 0xc4, 0x19, 0xe1, 0x70, 0x14, 0x72, 0x1d, 0x9a, 0x5a, 0x3b, 0x67, 0x55, 0x62, 0xb4, 0x1b,
+	0x9e, 0x70, 0x74, 0x0b, 0x80, 0xf2, 0x11, 0xf1, 0xf0, 0xb9, 0x4b, 0x1c, 0xbd, 0xdc, 0xd4, 0xda,
+	0x45, 0xab, 0x44, 0xb9, 0x19, 0x01, 0xe8, 0x73, 0x28, 0xb8, 0xbe, 0x8d, 0x5d, 0xc2, 0xf5, 0x4a,
+	0x33, 0xd7, 0x2e, 0xef, 0x7d, 0x18, 0xd7, 0xa9, 0x76, 0xab, 0x33, 0x8c, 0x68, 0xd3, 0x0b, 0x83,
+	0x99, 0x15, 0x2b, 0x8b, 0x02, 0x19, 0x09, 0x26, 0x94, 0x8b, 0x94, 0xb9, 0xbe, 0xd5, 0xcc, 0x89,
+	0x02, 0x17, 0xa0, 0xc6, 0x3e, 0x54, 0x16, 0x4d, 0x51, 0x1d, 0x72, 0x97, 0x64, 0x26, 0xb7, 0xbd,
+	0x64, 0x89, 0x25, 0xba, 0x06, 0x1b, 0x57, 0x62, 0xc7, 0xe5, 0x0e, 0x97, 0xac, 0x48, 0xd8, 0xcf,
+	0x3e, 0xd0, 0x1e, 0xe5, 0x8b, 0xc5, 0x7a, 0xe9, 0x51, 0xbe, 0x58, 0xaa, 0x43, 0xeb, 0x79, 0x16,
+	0xb6, 0x4e, 0x99, 0x83, 0x43, 0x12, 0xf7, 0xef, 0x10, 0xb6, 0x44, 0x73, 0x5c, 0x7a, 0x41, 0xec,
+	0x99, 0xed, 0x12, 0xe9, 0xb3, 0xba, 0xd7, 0x4a, 0x5a, 0xb9, 0xa8, 0x2d, 0xfa, 0x35, 0x8c, 0x35,
+	0xad, 0x0a, 0x5e, 0x90, 0xe2, 0x2e, 0x3b, 0x38, 0xc4, 0x32, 0x87, 0x72, 0xda, 0x65, 0x65, 0x2d,
+	0xbb, 0xdc, 0xc7, 0x21, 0x16, 0xfb, 0xc8, 0x02, 0x72, 0x35, 0xb2, 0x5d, 0xdf, 0xbe, 0x94, 0xbd,
+	0xce, 0x59, 0x25, 0x81, 0xf4, 0x04, 0xd0, 0x7a, 0xa6, 0x41, 0x65, 0x31, 0x12, 0xd2, 0xe1, 0x5a,
+	0xf7, 0xf8, 0x78, 0x38, 0x78, 0x68, 0xf6, 0xbe, 0xeb, 0x0d, 0xcd, 0x51, 0xcf, 0x32, 0xbb, 0x27,
+	0x66, 0xbf, 0x9e, 0x59, 0x63, 0x4e, 0x8f, 0xfb, 0x92, 0xd1, 0xd6, 0x18, 0xf3, 0xa8, 0x7b, 0x30,
+	0x34, 0xfb, 0xf5, 0x2c, 0xba, 0x01, 0xd7, 0x97, 0x98, 0xfe, 0xe0, 0xdb, 0x88, 0xca, 0xad, 0x19,
+	0xf5, 0xcd, 0xa1, 0x29, 0xdc, 0xe5, 0x5b, 0xf7, 0xa0, 0x7a, 0x48, 0xc2, 0x2e, 0x63, 0xdc, 0x22,
+	0x3f, 0x4c, 0x09, 0x0f, 0x45, 0x11, 0x17, 0x81, 0x3f, 0x51, 0x45, 0x68, 0x51, 0x11, 0x02, 0x89,
+	0x8a, 0x18, 0x42, 0x2d, 0x31, 0xe0, 0xcc, 0xf7, 0x38, 0x41, 0x1f, 0x43, 0x5e, 0xdc, 0x52, 0x5d,
+	0x93, 0x87, 0x63, 0x6d, 0x7b, 0x24, 0x29, 0x1a, 0x19, 0x79, 0xcc, 0x4a, 0x8f, 0x91, 0xd0, 0xfa,
+	0x14, 0xaa, 0x0f, 0xa9, 0xe7, 0x08, 0x35, 0x15, 0xfe, 0x3a, 0x6c, 0x8a, 0xfd, 0x56, 0x97, 0xaf,
+	0x64, 0x6d, 0x60, 0xc6, 0x06, 0x4e, 0xeb, 0x3e, 0xd4, 0x12, 0x45, 0x15, 0xf6, 0x36, 0xe4, 0x30,
+	0x63, 0xea, 0x8e, 0xae, 0x45, 0x15, 0x5c, 0xab, 0x07, 0xbb, 0x03, 0xce, 0xa7, 0xa4, 0x6b, 0xdb,
+	0x84, 0xf3, 0x13, 0xff, 0x92, 0x78, 0x71, 0x9c, 0xf6, 0x52, 0x9c, 0xb7, 0x5e, 0x72, 0x15, 0xfa,
+	0x01, 0x7c, 0xb0, 0x64, 0x9f, 0x84, 0xaf, 0x60, 0x09, 0x8f, 0x42, 0x81, 0xab, 0x74, 0xcb, 0x38,
+	0x55, 0x6d, 0xfd, 0xa6, 0xc1, 0xf5, 0x43, 0x12, 0x9a, 0x4f, 0x43, 0xe2, 0xc9, 0x03, 0x9f, 0x18,
+	0x9b, 0x80, 0x26, 0x84, 0x73, 0x3c, 0x26, 0x23, 0x92, 0xb0, 0x6a, 0x03, 0x77, 0xe2, 0x4c, 0x12,
+	0xbb, 0x63, 0x9f, 0x7a, 0xa1, 0xb5, 0xad, 0x2c, 0x52, 0x77, 0xe8, 0x4b, 0xa8, 0xd9, 0xdf, 0xe3,
+	0x70, 0xd1, 0x47, 0xf6, 0x7f, 0x7d, 0x54, 0x85, 0x7a, 0xea, 0xa0, 0xf5, 0x4b, 0x16, 0xaa, 0xcb,
+	0x2a, 0xef, 0xbf, 0x31, 0x68, 0x07, 0x36, 0xb1, 0x2d, 0x67, 0x57, 0x74, 0x39, 0x95, 0x24, 0x5a,
+	0xed, 0xe2, 0x73, 0xe2, 0xaa, 0x69, 0x17, 0x09, 0xe8, 0x51, 0x5a, 0xb2, 0xed, 0x7b, 0x4e, 0x34,
+	0x79, 0xe5, 0xd4, 0x2b, 0xef, 0xdd, 0x48, 0xba, 0x17, 0x69, 0xf4, 0x12, 0x85, 0xaf, 0x32, 0x49,
+	0xdd, 0x29, 0x88, 0xfa, 0x50, 0x1f, 0x07, 0xfe, 0x94, 0x2d, 0x7a, 0xda, 0x90, 0x9e, 0x76, 0x63,
+	0x4f, 0x87, 0x82, 0x5f, 0xf2, 0x53, 0x1b, 0x2f, 0x43, 0x07, 0x15, 0x80, 0xd4, 0xbe, 0xf5, 0x2c,
+	0x07, 0xdb, 0x6b, 0xe1, 0xd1, 0x19, 0x6c, 0xaf, 0x65, 0xad, 0xfa, 0x74, 0xf7, 0x9d, 0x49, 0xaf,
+	0x21, 0x56, 0x7d, 0xb5, 0x86, 0xc6, 0xef, 0x59, 0xa8, 0xaf, 0xaa, 0x89, 0x33, 0x15, 0x92, 0xa7,
+	0xe1, 0x48, 0x69, 0xc7, 0x67, 0x4a, 0x60, 0x4a, 0x17, 0x8d, 0xa1, 0xee, 0xf8, 0xf6, 0x74, 0x42,
+	0xbc, 0x54, 0x2d, 0x9a, 0x4b, 0x5f, 0xbc, 0x7f, 0x3e, 0x9d, 0xbe, 0x72, 0x91, 0x66, 0x58, 0x8b,
+	0xbd, 0x2a, 0xdd, 0xc6, 0xcf, 0x1a, 0x6c, 0xaf, 0xa9, 0xa1, 0x1b, 0x50, 0xa4, 0x7c, 0x44, 0x27,
+	0x71, 0x76, 0x45, 0xab, 0x40, 0xf9, 0x40, 0x88, 0x8a, 0xba, 0xa2, 0x0e, 0xf1, 0x65, 0x46, 0x92,
+	0x7a, 0x22, 0x44, 0x45, 0xe1, 0xa9, 0x43, 0x7d, 0x79, 0x28, 0x24, 0xd5, 0x15, 0x22, 0xba, 0x09,
+	0xa5, 0x09, 0x9d, 0x90, 0xe8, 0x19, 0xcd, 0xcb, 0x27, 0xa2, 0x28, 0x00, 0xf1, 0x6c, 0xb6, 0xfe,
+	0xd6, 0xa0, 0xb6, 0xd2, 0x48, 0xf4, 0x18, 0x6a, 0x2b, 0xbd, 0x57, 0xfd, 0xf8, 0xe4, 0x1d, 0xad,
+	0x5f, 0x91, 0xad, 0xea, 0xf2, 0x39, 0x68, 0xf8, 0x50, 0x5d, 0xd6, 0x10, 0x23, 0x30, 0x0a, 0x21,
+	0x93, 0x8a, 0x9a, 0x50, 0x92, 0x88, 0x7c, 0xcc, 0x0d, 0x80, 0x2b, 0xca, 0xe9, 0x39, 0x75, 0x69,
+	0x38, 0x53, 0x67, 0x7f, 0x01, 0x11, 0x7c, 0xfa, 0xc8, 0xe9, 0x39, 0x59, 0xd3, 0x02, 0x72, 0xf7,
+	0x0e, 0x14, 0xd4, 0x07, 0x01, 0x95, 0xa1, 0x70, 0x7a, 0xf4, 0xf5, 0xd1, 0xe3, 0xb3, 0xa3, 0x7a,
+	0x06, 0x55, 0xa0, 0x78, 0x66, 0x1e, 0x8c, 0x9e, 0x0c, 0xcc, 0xb3, 0xba, 0xb6, 0xf7, 0x67, 0x16,
+	0x76, 0x7b, 0x2e, 0x25, 0x5e, 0xc8, 0xd5, 0x4c, 0xe3, 0x96, 0xfa, 0x07, 0xa1, 0x7d, 0x28, 0xa8,
+	0x69, 0x88, 0x92, 0x9b, 0xbe, 0x3c, 0x47, 0x1b, 0xbb, 0x6b, 0xb8, 0x1a, 0x3d, 0xfb, 0x50, 0x50,
+	0x03, 0x3c, 0xb5, 0x5d, 0x7e, 0x02, 0x52, 0xdb, 0xd5, 0x49, 0xff, 0x10, 0xb6, 0x96, 0xe6, 0x19,
+	0xda, 0xe9, 0x44, 0xdf, 0xac, 0x4e, 0xfc, 0xcd, 0xea, 0x98, 0xe2, 0x0f, 0xd6, 0xb8, 0xb5, 0xe0,
+	0xe1, 0x2d, 0xe3, 0xef, 0x18, 0xea, 0xab, 0x73, 0x19, 0x7d, 0x14, 0x9b, 0xbc, 0x63, 0x62, 0x37,
+	0x6e, 0x26, 0xbf, 0xab, 0xf5, 0x69, 0x7c, 0x70, 0xff, 0xc5, 0x2b, 0x23, 0xf3, 0xf2, 0x95, 0x91,
+	0x79, 0xf3, 0xca, 0xd0, 0x7e, 0x9a, 0x1b, 0xda, 0x1f, 0x73, 0x43, 0xfb, 0x6b, 0x6e, 0x68, 0x2f,
+	0xe6, 0x86, 0xf6, 0xcf, 0xdc, 0xd0, 0xfe, 0x9d, 0x1b, 0x99, 0x37, 0x73, 0x43, 0xfb, 0xf5, 0xb5,
+	0x91, 0x79, 0xf1, 0xda, 0xc8, 0xbc, 0x7c, 0x6d, 0x64, 0xce, 0x37, 0x65, 0xda, 0x9f, 0xfd, 0x17,
+	0x00, 0x00, 0xff, 0xff, 0xe4, 0x84, 0x14, 0x3d, 0x6a, 0x0a, 0x00, 0x00,
 }
 
 func (x AppType) String() string {
@@ -672,17 +1132,27 @@ func (this *MiniApp) Equal(that interface{}) bool {
 	if this.Link != that1.Link {
 		return false
 	}
-	if !this.JsonContent.Equal(that1.JsonContent) {
-		return false
-	}
-	if this.CreatedAtTs != that1.CreatedAtTs {
-		return false
-	}
 	if this.ModifiedAtTs != that1.ModifiedAtTs {
 		return false
 	}
 	if this.IsEnabled != that1.IsEnabled {
 		return false
+	}
+	if len(this.Locales) != len(that1.Locales) {
+		return false
+	}
+	for i := range this.Locales {
+		if this.Locales[i] != that1.Locales[i] {
+			return false
+		}
+	}
+	if len(this.Permissions) != len(that1.Permissions) {
+		return false
+	}
+	for i := range this.Permissions {
+		if this.Permissions[i] != that1.Permissions[i] {
+			return false
+		}
 	}
 	return true
 }
@@ -868,6 +1338,288 @@ func (this *AccessTokenResponse) Equal(that interface{}) bool {
 	}
 	return true
 }
+func (this *GetExtensionsResponse) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*GetExtensionsResponse)
+	if !ok {
+		that2, ok := that.(GetExtensionsResponse)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if len(this.MessageExtensions) != len(that1.MessageExtensions) {
+		return false
+	}
+	for i := range this.MessageExtensions {
+		if !this.MessageExtensions[i].Equal(that1.MessageExtensions[i]) {
+			return false
+		}
+	}
+	if len(this.ChatExtensions) != len(that1.ChatExtensions) {
+		return false
+	}
+	for i := range this.ChatExtensions {
+		if !this.ChatExtensions[i].Equal(that1.ChatExtensions[i]) {
+			return false
+		}
+	}
+	return true
+}
+func (this *ExtensionPoint) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*ExtensionPoint)
+	if !ok {
+		that2, ok := that.(ExtensionPoint)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if !this.AppId.Equal(that1.AppId) {
+		return false
+	}
+	if this.Action != that1.Action {
+		return false
+	}
+	if this.Label != that1.Label {
+		return false
+	}
+	if that1.Conditions == nil {
+		if this.Conditions != nil {
+			return false
+		}
+	} else if this.Conditions == nil {
+		return false
+	} else if !this.Conditions.Equal(that1.Conditions) {
+		return false
+	}
+	return true
+}
+func (this *ExtensionPoint_MessageConditions) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*ExtensionPoint_MessageConditions)
+	if !ok {
+		that2, ok := that.(ExtensionPoint_MessageConditions)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if !this.MessageConditions.Equal(that1.MessageConditions) {
+		return false
+	}
+	return true
+}
+func (this *ExtensionPoint_GroupConditions) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*ExtensionPoint_GroupConditions)
+	if !ok {
+		that2, ok := that.(ExtensionPoint_GroupConditions)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if !this.GroupConditions.Equal(that1.GroupConditions) {
+		return false
+	}
+	return true
+}
+func (this *MessageConditions) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*MessageConditions)
+	if !ok {
+		that2, ok := that.(MessageConditions)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if len(this.MessageCondition) != len(that1.MessageCondition) {
+		return false
+	}
+	for i := range this.MessageCondition {
+		if !this.MessageCondition[i].Equal(that1.MessageCondition[i]) {
+			return false
+		}
+	}
+	return true
+}
+func (this *MessageConditions_MessageCondition) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*MessageConditions_MessageCondition)
+	if !ok {
+		that2, ok := that.(MessageConditions_MessageCondition)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.TextMessage != that1.TextMessage {
+		return false
+	}
+	if !this.DocumentMessage.Equal(that1.DocumentMessage) {
+		return false
+	}
+	return true
+}
+func (this *MessageConditions_MessageCondition_DocumentCondition) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*MessageConditions_MessageCondition_DocumentCondition)
+	if !ok {
+		that2, ok := that.(MessageConditions_MessageCondition_DocumentCondition)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.IsImage != that1.IsImage {
+		return false
+	}
+	if this.IsVideo != that1.IsVideo {
+		return false
+	}
+	if this.IsAudio != that1.IsAudio {
+		return false
+	}
+	if len(this.MimeType) != len(that1.MimeType) {
+		return false
+	}
+	for i := range this.MimeType {
+		if this.MimeType[i] != that1.MimeType[i] {
+			return false
+		}
+	}
+	return true
+}
+func (this *GroupConditions) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*GroupConditions)
+	if !ok {
+		that2, ok := that.(GroupConditions)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if len(this.GroupCondition) != len(that1.GroupCondition) {
+		return false
+	}
+	for i := range this.GroupCondition {
+		if !this.GroupCondition[i].Equal(that1.GroupCondition[i]) {
+			return false
+		}
+	}
+	return true
+}
+func (this *GroupConditions_GroupCondition) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*GroupConditions_GroupCondition)
+	if !ok {
+		that2, ok := that.(GroupConditions_GroupCondition)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.GroupType != that1.GroupType {
+		return false
+	}
+	if this.Visibility != that1.Visibility {
+		return false
+	}
+	if len(this.Permission) != len(that1.Permission) {
+		return false
+	}
+	for i := range this.Permission {
+		if this.Permission[i] != that1.Permission[i] {
+			return false
+		}
+	}
+	return true
+}
 func (this *MiniApp) GoString() string {
 	if this == nil {
 		return "nil"
@@ -883,12 +1635,22 @@ func (this *MiniApp) GoString() string {
 	s = append(s, "Version: "+fmt.Sprintf("%#v", this.Version)+",\n")
 	s = append(s, "Icon: "+fmt.Sprintf("%#v", this.Icon)+",\n")
 	s = append(s, "Link: "+fmt.Sprintf("%#v", this.Link)+",\n")
-	if this.JsonContent != nil {
-		s = append(s, "JsonContent: "+fmt.Sprintf("%#v", this.JsonContent)+",\n")
-	}
-	s = append(s, "CreatedAtTs: "+fmt.Sprintf("%#v", this.CreatedAtTs)+",\n")
 	s = append(s, "ModifiedAtTs: "+fmt.Sprintf("%#v", this.ModifiedAtTs)+",\n")
 	s = append(s, "IsEnabled: "+fmt.Sprintf("%#v", this.IsEnabled)+",\n")
+	keysForLocales := make([]string, 0, len(this.Locales))
+	for k, _ := range this.Locales {
+		keysForLocales = append(keysForLocales, k)
+	}
+	github_com_gogo_protobuf_sortkeys.Strings(keysForLocales)
+	mapStringForLocales := "map[string]string{"
+	for _, k := range keysForLocales {
+		mapStringForLocales += fmt.Sprintf("%#v: %#v,", k, this.Locales[k])
+	}
+	mapStringForLocales += "}"
+	if this.Locales != nil {
+		s = append(s, "Locales: "+mapStringForLocales+",\n")
+	}
+	s = append(s, "Permissions: "+fmt.Sprintf("%#v", this.Permissions)+",\n")
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
@@ -973,6 +1735,116 @@ func (this *AccessTokenResponse) GoString() string {
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
+func (this *GetExtensionsResponse) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 6)
+	s = append(s, "&dialog.GetExtensionsResponse{")
+	if this.MessageExtensions != nil {
+		s = append(s, "MessageExtensions: "+fmt.Sprintf("%#v", this.MessageExtensions)+",\n")
+	}
+	if this.ChatExtensions != nil {
+		s = append(s, "ChatExtensions: "+fmt.Sprintf("%#v", this.ChatExtensions)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *ExtensionPoint) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 9)
+	s = append(s, "&dialog.ExtensionPoint{")
+	if this.AppId != nil {
+		s = append(s, "AppId: "+fmt.Sprintf("%#v", this.AppId)+",\n")
+	}
+	s = append(s, "Action: "+fmt.Sprintf("%#v", this.Action)+",\n")
+	s = append(s, "Label: "+fmt.Sprintf("%#v", this.Label)+",\n")
+	if this.Conditions != nil {
+		s = append(s, "Conditions: "+fmt.Sprintf("%#v", this.Conditions)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *ExtensionPoint_MessageConditions) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&dialog.ExtensionPoint_MessageConditions{` +
+		`MessageConditions:` + fmt.Sprintf("%#v", this.MessageConditions) + `}`}, ", ")
+	return s
+}
+func (this *ExtensionPoint_GroupConditions) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&dialog.ExtensionPoint_GroupConditions{` +
+		`GroupConditions:` + fmt.Sprintf("%#v", this.GroupConditions) + `}`}, ", ")
+	return s
+}
+func (this *MessageConditions) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 5)
+	s = append(s, "&dialog.MessageConditions{")
+	if this.MessageCondition != nil {
+		s = append(s, "MessageCondition: "+fmt.Sprintf("%#v", this.MessageCondition)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *MessageConditions_MessageCondition) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 6)
+	s = append(s, "&dialog.MessageConditions_MessageCondition{")
+	s = append(s, "TextMessage: "+fmt.Sprintf("%#v", this.TextMessage)+",\n")
+	if this.DocumentMessage != nil {
+		s = append(s, "DocumentMessage: "+fmt.Sprintf("%#v", this.DocumentMessage)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *MessageConditions_MessageCondition_DocumentCondition) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 8)
+	s = append(s, "&dialog.MessageConditions_MessageCondition_DocumentCondition{")
+	s = append(s, "IsImage: "+fmt.Sprintf("%#v", this.IsImage)+",\n")
+	s = append(s, "IsVideo: "+fmt.Sprintf("%#v", this.IsVideo)+",\n")
+	s = append(s, "IsAudio: "+fmt.Sprintf("%#v", this.IsAudio)+",\n")
+	s = append(s, "MimeType: "+fmt.Sprintf("%#v", this.MimeType)+",\n")
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *GroupConditions) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 5)
+	s = append(s, "&dialog.GroupConditions{")
+	if this.GroupCondition != nil {
+		s = append(s, "GroupCondition: "+fmt.Sprintf("%#v", this.GroupCondition)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *GroupConditions_GroupCondition) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 7)
+	s = append(s, "&dialog.GroupConditions_GroupCondition{")
+	s = append(s, "GroupType: "+fmt.Sprintf("%#v", this.GroupType)+",\n")
+	s = append(s, "Visibility: "+fmt.Sprintf("%#v", this.Visibility)+",\n")
+	s = append(s, "Permission: "+fmt.Sprintf("%#v", this.Permission)+",\n")
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
 func valueToGoStringMiniappsregistry(v interface{}, typ string) string {
 	rv := reflect.ValueOf(v)
 	if rv.IsNil() {
@@ -996,6 +1868,7 @@ const _ = grpc.SupportPackageIsVersion4
 type ClientsMiniAppsRegistryClient interface {
 	FindApp(ctx context.Context, in *FindAppRequest, opts ...grpc.CallOption) (*FindAppResponse, error)
 	GetApps(ctx context.Context, in *GetAppsRequest, opts ...grpc.CallOption) (*GetAppsResponse, error)
+	GetExtensions(ctx context.Context, in *types.Empty, opts ...grpc.CallOption) (*GetExtensionsResponse, error)
 	IssueAccessToken(ctx context.Context, in *IssueAccessTokenRequest, opts ...grpc.CallOption) (*AccessTokenResponse, error)
 }
 
@@ -1025,6 +1898,15 @@ func (c *clientsMiniAppsRegistryClient) GetApps(ctx context.Context, in *GetApps
 	return out, nil
 }
 
+func (c *clientsMiniAppsRegistryClient) GetExtensions(ctx context.Context, in *types.Empty, opts ...grpc.CallOption) (*GetExtensionsResponse, error) {
+	out := new(GetExtensionsResponse)
+	err := c.cc.Invoke(ctx, "/dialog.ClientsMiniAppsRegistry/GetExtensions", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *clientsMiniAppsRegistryClient) IssueAccessToken(ctx context.Context, in *IssueAccessTokenRequest, opts ...grpc.CallOption) (*AccessTokenResponse, error) {
 	out := new(AccessTokenResponse)
 	err := c.cc.Invoke(ctx, "/dialog.ClientsMiniAppsRegistry/IssueAccessToken", in, out, opts...)
@@ -1038,6 +1920,7 @@ func (c *clientsMiniAppsRegistryClient) IssueAccessToken(ctx context.Context, in
 type ClientsMiniAppsRegistryServer interface {
 	FindApp(context.Context, *FindAppRequest) (*FindAppResponse, error)
 	GetApps(context.Context, *GetAppsRequest) (*GetAppsResponse, error)
+	GetExtensions(context.Context, *types.Empty) (*GetExtensionsResponse, error)
 	IssueAccessToken(context.Context, *IssueAccessTokenRequest) (*AccessTokenResponse, error)
 }
 
@@ -1050,6 +1933,9 @@ func (*UnimplementedClientsMiniAppsRegistryServer) FindApp(ctx context.Context, 
 }
 func (*UnimplementedClientsMiniAppsRegistryServer) GetApps(ctx context.Context, req *GetAppsRequest) (*GetAppsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetApps not implemented")
+}
+func (*UnimplementedClientsMiniAppsRegistryServer) GetExtensions(ctx context.Context, req *types.Empty) (*GetExtensionsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetExtensions not implemented")
 }
 func (*UnimplementedClientsMiniAppsRegistryServer) IssueAccessToken(ctx context.Context, req *IssueAccessTokenRequest) (*AccessTokenResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method IssueAccessToken not implemented")
@@ -1095,6 +1981,24 @@ func _ClientsMiniAppsRegistry_GetApps_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ClientsMiniAppsRegistry_GetExtensions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(types.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ClientsMiniAppsRegistryServer).GetExtensions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/dialog.ClientsMiniAppsRegistry/GetExtensions",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ClientsMiniAppsRegistryServer).GetExtensions(ctx, req.(*types.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _ClientsMiniAppsRegistry_IssueAccessToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(IssueAccessTokenRequest)
 	if err := dec(in); err != nil {
@@ -1126,6 +2030,10 @@ var _ClientsMiniAppsRegistry_serviceDesc = grpc.ServiceDesc{
 			Handler:    _ClientsMiniAppsRegistry_GetApps_Handler,
 		},
 		{
+			MethodName: "GetExtensions",
+			Handler:    _ClientsMiniAppsRegistry_GetExtensions_Handler,
+		},
+		{
 			MethodName: "IssueAccessToken",
 			Handler:    _ClientsMiniAppsRegistry_IssueAccessToken_Handler,
 		},
@@ -1154,6 +2062,34 @@ func (m *MiniApp) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	if len(m.Permissions) > 0 {
+		for iNdEx := len(m.Permissions) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.Permissions[iNdEx])
+			copy(dAtA[i:], m.Permissions[iNdEx])
+			i = encodeVarintMiniappsregistry(dAtA, i, uint64(len(m.Permissions[iNdEx])))
+			i--
+			dAtA[i] = 0x6a
+		}
+	}
+	if len(m.Locales) > 0 {
+		for k := range m.Locales {
+			v := m.Locales[k]
+			baseI := i
+			i -= len(v)
+			copy(dAtA[i:], v)
+			i = encodeVarintMiniappsregistry(dAtA, i, uint64(len(v)))
+			i--
+			dAtA[i] = 0x12
+			i -= len(k)
+			copy(dAtA[i:], k)
+			i = encodeVarintMiniappsregistry(dAtA, i, uint64(len(k)))
+			i--
+			dAtA[i] = 0xa
+			i = encodeVarintMiniappsregistry(dAtA, i, uint64(baseI-i))
+			i--
+			dAtA[i] = 0x62
+		}
+	}
 	if m.IsEnabled {
 		i--
 		if m.IsEnabled {
@@ -1168,23 +2104,6 @@ func (m *MiniApp) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i = encodeVarintMiniappsregistry(dAtA, i, uint64(m.ModifiedAtTs))
 		i--
 		dAtA[i] = 0x50
-	}
-	if m.CreatedAtTs != 0 {
-		i = encodeVarintMiniappsregistry(dAtA, i, uint64(m.CreatedAtTs))
-		i--
-		dAtA[i] = 0x48
-	}
-	if m.JsonContent != nil {
-		{
-			size, err := m.JsonContent.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintMiniappsregistry(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0x42
 	}
 	if len(m.Link) > 0 {
 		i -= len(m.Link)
@@ -1486,6 +2405,381 @@ func (m *AccessTokenResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
+func (m *GetExtensionsResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *GetExtensionsResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *GetExtensionsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.ChatExtensions) > 0 {
+		for iNdEx := len(m.ChatExtensions) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.ChatExtensions[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintMiniappsregistry(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x12
+		}
+	}
+	if len(m.MessageExtensions) > 0 {
+		for iNdEx := len(m.MessageExtensions) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.MessageExtensions[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintMiniappsregistry(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *ExtensionPoint) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *ExtensionPoint) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ExtensionPoint) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Conditions != nil {
+		{
+			size := m.Conditions.Size()
+			i -= size
+			if _, err := m.Conditions.MarshalTo(dAtA[i:]); err != nil {
+				return 0, err
+			}
+		}
+	}
+	if len(m.Label) > 0 {
+		i -= len(m.Label)
+		copy(dAtA[i:], m.Label)
+		i = encodeVarintMiniappsregistry(dAtA, i, uint64(len(m.Label)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.Action) > 0 {
+		i -= len(m.Action)
+		copy(dAtA[i:], m.Action)
+		i = encodeVarintMiniappsregistry(dAtA, i, uint64(len(m.Action)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if m.AppId != nil {
+		{
+			size, err := m.AppId.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintMiniappsregistry(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *ExtensionPoint_MessageConditions) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ExtensionPoint_MessageConditions) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	if m.MessageConditions != nil {
+		{
+			size, err := m.MessageConditions.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintMiniappsregistry(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x22
+	}
+	return len(dAtA) - i, nil
+}
+func (m *ExtensionPoint_GroupConditions) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ExtensionPoint_GroupConditions) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	if m.GroupConditions != nil {
+		{
+			size, err := m.GroupConditions.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintMiniappsregistry(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x2a
+	}
+	return len(dAtA) - i, nil
+}
+func (m *MessageConditions) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MessageConditions) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MessageConditions) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.MessageCondition) > 0 {
+		for iNdEx := len(m.MessageCondition) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.MessageCondition[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintMiniappsregistry(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MessageConditions_MessageCondition) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MessageConditions_MessageCondition) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MessageConditions_MessageCondition) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.DocumentMessage != nil {
+		{
+			size, err := m.DocumentMessage.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintMiniappsregistry(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.TextMessage) > 0 {
+		i -= len(m.TextMessage)
+		copy(dAtA[i:], m.TextMessage)
+		i = encodeVarintMiniappsregistry(dAtA, i, uint64(len(m.TextMessage)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MessageConditions_MessageCondition_DocumentCondition) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MessageConditions_MessageCondition_DocumentCondition) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MessageConditions_MessageCondition_DocumentCondition) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.MimeType) > 0 {
+		for iNdEx := len(m.MimeType) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.MimeType[iNdEx])
+			copy(dAtA[i:], m.MimeType[iNdEx])
+			i = encodeVarintMiniappsregistry(dAtA, i, uint64(len(m.MimeType[iNdEx])))
+			i--
+			dAtA[i] = 0x22
+		}
+	}
+	if m.IsAudio {
+		i--
+		if m.IsAudio {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x18
+	}
+	if m.IsVideo {
+		i--
+		if m.IsVideo {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x10
+	}
+	if m.IsImage {
+		i--
+		if m.IsImage {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *GroupConditions) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *GroupConditions) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *GroupConditions) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.GroupCondition) > 0 {
+		for iNdEx := len(m.GroupCondition) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.GroupCondition[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintMiniappsregistry(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *GroupConditions_GroupCondition) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *GroupConditions_GroupCondition) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *GroupConditions_GroupCondition) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Permission) > 0 {
+		for iNdEx := len(m.Permission) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.Permission[iNdEx])
+			copy(dAtA[i:], m.Permission[iNdEx])
+			i = encodeVarintMiniappsregistry(dAtA, i, uint64(len(m.Permission[iNdEx])))
+			i--
+			dAtA[i] = 0x1a
+		}
+	}
+	if len(m.Visibility) > 0 {
+		i -= len(m.Visibility)
+		copy(dAtA[i:], m.Visibility)
+		i = encodeVarintMiniappsregistry(dAtA, i, uint64(len(m.Visibility)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.GroupType) > 0 {
+		i -= len(m.GroupType)
+		copy(dAtA[i:], m.GroupType)
+		i = encodeVarintMiniappsregistry(dAtA, i, uint64(len(m.GroupType)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintMiniappsregistry(dAtA []byte, offset int, v uint64) int {
 	offset -= sovMiniappsregistry(v)
 	base := offset
@@ -1530,18 +2824,25 @@ func (m *MiniApp) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovMiniappsregistry(uint64(l))
 	}
-	if m.JsonContent != nil {
-		l = m.JsonContent.Size()
-		n += 1 + l + sovMiniappsregistry(uint64(l))
-	}
-	if m.CreatedAtTs != 0 {
-		n += 1 + sovMiniappsregistry(uint64(m.CreatedAtTs))
-	}
 	if m.ModifiedAtTs != 0 {
 		n += 1 + sovMiniappsregistry(uint64(m.ModifiedAtTs))
 	}
 	if m.IsEnabled {
 		n += 2
+	}
+	if len(m.Locales) > 0 {
+		for k, v := range m.Locales {
+			_ = k
+			_ = v
+			mapEntrySize := 1 + len(k) + sovMiniappsregistry(uint64(len(k))) + 1 + len(v) + sovMiniappsregistry(uint64(len(v)))
+			n += mapEntrySize + 1 + sovMiniappsregistry(uint64(mapEntrySize))
+		}
+	}
+	if len(m.Permissions) > 0 {
+		for _, s := range m.Permissions {
+			l = len(s)
+			n += 1 + l + sovMiniappsregistry(uint64(l))
+		}
 	}
 	return n
 }
@@ -1647,6 +2948,169 @@ func (m *AccessTokenResponse) Size() (n int) {
 	return n
 }
 
+func (m *GetExtensionsResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.MessageExtensions) > 0 {
+		for _, e := range m.MessageExtensions {
+			l = e.Size()
+			n += 1 + l + sovMiniappsregistry(uint64(l))
+		}
+	}
+	if len(m.ChatExtensions) > 0 {
+		for _, e := range m.ChatExtensions {
+			l = e.Size()
+			n += 1 + l + sovMiniappsregistry(uint64(l))
+		}
+	}
+	return n
+}
+
+func (m *ExtensionPoint) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.AppId != nil {
+		l = m.AppId.Size()
+		n += 1 + l + sovMiniappsregistry(uint64(l))
+	}
+	l = len(m.Action)
+	if l > 0 {
+		n += 1 + l + sovMiniappsregistry(uint64(l))
+	}
+	l = len(m.Label)
+	if l > 0 {
+		n += 1 + l + sovMiniappsregistry(uint64(l))
+	}
+	if m.Conditions != nil {
+		n += m.Conditions.Size()
+	}
+	return n
+}
+
+func (m *ExtensionPoint_MessageConditions) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.MessageConditions != nil {
+		l = m.MessageConditions.Size()
+		n += 1 + l + sovMiniappsregistry(uint64(l))
+	}
+	return n
+}
+func (m *ExtensionPoint_GroupConditions) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.GroupConditions != nil {
+		l = m.GroupConditions.Size()
+		n += 1 + l + sovMiniappsregistry(uint64(l))
+	}
+	return n
+}
+func (m *MessageConditions) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.MessageCondition) > 0 {
+		for _, e := range m.MessageCondition {
+			l = e.Size()
+			n += 1 + l + sovMiniappsregistry(uint64(l))
+		}
+	}
+	return n
+}
+
+func (m *MessageConditions_MessageCondition) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.TextMessage)
+	if l > 0 {
+		n += 1 + l + sovMiniappsregistry(uint64(l))
+	}
+	if m.DocumentMessage != nil {
+		l = m.DocumentMessage.Size()
+		n += 1 + l + sovMiniappsregistry(uint64(l))
+	}
+	return n
+}
+
+func (m *MessageConditions_MessageCondition_DocumentCondition) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.IsImage {
+		n += 2
+	}
+	if m.IsVideo {
+		n += 2
+	}
+	if m.IsAudio {
+		n += 2
+	}
+	if len(m.MimeType) > 0 {
+		for _, s := range m.MimeType {
+			l = len(s)
+			n += 1 + l + sovMiniappsregistry(uint64(l))
+		}
+	}
+	return n
+}
+
+func (m *GroupConditions) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.GroupCondition) > 0 {
+		for _, e := range m.GroupCondition {
+			l = e.Size()
+			n += 1 + l + sovMiniappsregistry(uint64(l))
+		}
+	}
+	return n
+}
+
+func (m *GroupConditions_GroupCondition) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.GroupType)
+	if l > 0 {
+		n += 1 + l + sovMiniappsregistry(uint64(l))
+	}
+	l = len(m.Visibility)
+	if l > 0 {
+		n += 1 + l + sovMiniappsregistry(uint64(l))
+	}
+	if len(m.Permission) > 0 {
+		for _, s := range m.Permission {
+			l = len(s)
+			n += 1 + l + sovMiniappsregistry(uint64(l))
+		}
+	}
+	return n
+}
+
 func sovMiniappsregistry(x uint64) (n int) {
 	return (math_bits.Len64(x|1) + 6) / 7
 }
@@ -1657,6 +3121,16 @@ func (this *MiniApp) String() string {
 	if this == nil {
 		return "nil"
 	}
+	keysForLocales := make([]string, 0, len(this.Locales))
+	for k, _ := range this.Locales {
+		keysForLocales = append(keysForLocales, k)
+	}
+	github_com_gogo_protobuf_sortkeys.Strings(keysForLocales)
+	mapStringForLocales := "map[string]string{"
+	for _, k := range keysForLocales {
+		mapStringForLocales += fmt.Sprintf("%v: %v,", k, this.Locales[k])
+	}
+	mapStringForLocales += "}"
 	s := strings.Join([]string{`&MiniApp{`,
 		`Id:` + strings.Replace(fmt.Sprintf("%v", this.Id), "UUIDValue", "UUIDValue", 1) + `,`,
 		`AppType:` + fmt.Sprintf("%v", this.AppType) + `,`,
@@ -1665,10 +3139,10 @@ func (this *MiniApp) String() string {
 		`Version:` + fmt.Sprintf("%v", this.Version) + `,`,
 		`Icon:` + fmt.Sprintf("%v", this.Icon) + `,`,
 		`Link:` + fmt.Sprintf("%v", this.Link) + `,`,
-		`JsonContent:` + strings.Replace(fmt.Sprintf("%v", this.JsonContent), "StringValue", "types.StringValue", 1) + `,`,
-		`CreatedAtTs:` + fmt.Sprintf("%v", this.CreatedAtTs) + `,`,
 		`ModifiedAtTs:` + fmt.Sprintf("%v", this.ModifiedAtTs) + `,`,
 		`IsEnabled:` + fmt.Sprintf("%v", this.IsEnabled) + `,`,
+		`Locales:` + mapStringForLocales + `,`,
+		`Permissions:` + fmt.Sprintf("%v", this.Permissions) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -1747,6 +3221,126 @@ func (this *AccessTokenResponse) String() string {
 	}
 	s := strings.Join([]string{`&AccessTokenResponse{`,
 		`AccessToken:` + fmt.Sprintf("%v", this.AccessToken) + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *GetExtensionsResponse) String() string {
+	if this == nil {
+		return "nil"
+	}
+	repeatedStringForMessageExtensions := "[]*ExtensionPoint{"
+	for _, f := range this.MessageExtensions {
+		repeatedStringForMessageExtensions += strings.Replace(f.String(), "ExtensionPoint", "ExtensionPoint", 1) + ","
+	}
+	repeatedStringForMessageExtensions += "}"
+	repeatedStringForChatExtensions := "[]*ExtensionPoint{"
+	for _, f := range this.ChatExtensions {
+		repeatedStringForChatExtensions += strings.Replace(f.String(), "ExtensionPoint", "ExtensionPoint", 1) + ","
+	}
+	repeatedStringForChatExtensions += "}"
+	s := strings.Join([]string{`&GetExtensionsResponse{`,
+		`MessageExtensions:` + repeatedStringForMessageExtensions + `,`,
+		`ChatExtensions:` + repeatedStringForChatExtensions + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *ExtensionPoint) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&ExtensionPoint{`,
+		`AppId:` + strings.Replace(fmt.Sprintf("%v", this.AppId), "UUIDValue", "UUIDValue", 1) + `,`,
+		`Action:` + fmt.Sprintf("%v", this.Action) + `,`,
+		`Label:` + fmt.Sprintf("%v", this.Label) + `,`,
+		`Conditions:` + fmt.Sprintf("%v", this.Conditions) + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *ExtensionPoint_MessageConditions) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&ExtensionPoint_MessageConditions{`,
+		`MessageConditions:` + strings.Replace(fmt.Sprintf("%v", this.MessageConditions), "MessageConditions", "MessageConditions", 1) + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *ExtensionPoint_GroupConditions) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&ExtensionPoint_GroupConditions{`,
+		`GroupConditions:` + strings.Replace(fmt.Sprintf("%v", this.GroupConditions), "GroupConditions", "GroupConditions", 1) + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *MessageConditions) String() string {
+	if this == nil {
+		return "nil"
+	}
+	repeatedStringForMessageCondition := "[]*MessageConditions_MessageCondition{"
+	for _, f := range this.MessageCondition {
+		repeatedStringForMessageCondition += strings.Replace(fmt.Sprintf("%v", f), "MessageConditions_MessageCondition", "MessageConditions_MessageCondition", 1) + ","
+	}
+	repeatedStringForMessageCondition += "}"
+	s := strings.Join([]string{`&MessageConditions{`,
+		`MessageCondition:` + repeatedStringForMessageCondition + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *MessageConditions_MessageCondition) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&MessageConditions_MessageCondition{`,
+		`TextMessage:` + fmt.Sprintf("%v", this.TextMessage) + `,`,
+		`DocumentMessage:` + strings.Replace(fmt.Sprintf("%v", this.DocumentMessage), "MessageConditions_MessageCondition_DocumentCondition", "MessageConditions_MessageCondition_DocumentCondition", 1) + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *MessageConditions_MessageCondition_DocumentCondition) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&MessageConditions_MessageCondition_DocumentCondition{`,
+		`IsImage:` + fmt.Sprintf("%v", this.IsImage) + `,`,
+		`IsVideo:` + fmt.Sprintf("%v", this.IsVideo) + `,`,
+		`IsAudio:` + fmt.Sprintf("%v", this.IsAudio) + `,`,
+		`MimeType:` + fmt.Sprintf("%v", this.MimeType) + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *GroupConditions) String() string {
+	if this == nil {
+		return "nil"
+	}
+	repeatedStringForGroupCondition := "[]*GroupConditions_GroupCondition{"
+	for _, f := range this.GroupCondition {
+		repeatedStringForGroupCondition += strings.Replace(fmt.Sprintf("%v", f), "GroupConditions_GroupCondition", "GroupConditions_GroupCondition", 1) + ","
+	}
+	repeatedStringForGroupCondition += "}"
+	s := strings.Join([]string{`&GroupConditions{`,
+		`GroupCondition:` + repeatedStringForGroupCondition + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *GroupConditions_GroupCondition) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&GroupConditions_GroupCondition{`,
+		`GroupType:` + fmt.Sprintf("%v", this.GroupType) + `,`,
+		`Visibility:` + fmt.Sprintf("%v", this.Visibility) + `,`,
+		`Permission:` + fmt.Sprintf("%v", this.Permission) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -2003,61 +3597,6 @@ func (m *MiniApp) Unmarshal(dAtA []byte) error {
 			}
 			m.Link = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 8:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field JsonContent", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowMiniappsregistry
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthMiniappsregistry
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthMiniappsregistry
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.JsonContent == nil {
-				m.JsonContent = &types.StringValue{}
-			}
-			if err := m.JsonContent.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 9:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field CreatedAtTs", wireType)
-			}
-			m.CreatedAtTs = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowMiniappsregistry
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.CreatedAtTs |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
 		case 10:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field ModifiedAtTs", wireType)
@@ -2097,6 +3636,165 @@ func (m *MiniApp) Unmarshal(dAtA []byte) error {
 				}
 			}
 			m.IsEnabled = bool(v != 0)
+		case 12:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Locales", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMiniappsregistry
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Locales == nil {
+				m.Locales = make(map[string]string)
+			}
+			var mapkey string
+			var mapvalue string
+			for iNdEx < postIndex {
+				entryPreIndex := iNdEx
+				var wire uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowMiniappsregistry
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					wire |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				fieldNum := int32(wire >> 3)
+				if fieldNum == 1 {
+					var stringLenmapkey uint64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowMiniappsregistry
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						stringLenmapkey |= uint64(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					intStringLenmapkey := int(stringLenmapkey)
+					if intStringLenmapkey < 0 {
+						return ErrInvalidLengthMiniappsregistry
+					}
+					postStringIndexmapkey := iNdEx + intStringLenmapkey
+					if postStringIndexmapkey < 0 {
+						return ErrInvalidLengthMiniappsregistry
+					}
+					if postStringIndexmapkey > l {
+						return io.ErrUnexpectedEOF
+					}
+					mapkey = string(dAtA[iNdEx:postStringIndexmapkey])
+					iNdEx = postStringIndexmapkey
+				} else if fieldNum == 2 {
+					var stringLenmapvalue uint64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowMiniappsregistry
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						stringLenmapvalue |= uint64(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					intStringLenmapvalue := int(stringLenmapvalue)
+					if intStringLenmapvalue < 0 {
+						return ErrInvalidLengthMiniappsregistry
+					}
+					postStringIndexmapvalue := iNdEx + intStringLenmapvalue
+					if postStringIndexmapvalue < 0 {
+						return ErrInvalidLengthMiniappsregistry
+					}
+					if postStringIndexmapvalue > l {
+						return io.ErrUnexpectedEOF
+					}
+					mapvalue = string(dAtA[iNdEx:postStringIndexmapvalue])
+					iNdEx = postStringIndexmapvalue
+				} else {
+					iNdEx = entryPreIndex
+					skippy, err := skipMiniappsregistry(dAtA[iNdEx:])
+					if err != nil {
+						return err
+					}
+					if skippy < 0 {
+						return ErrInvalidLengthMiniappsregistry
+					}
+					if (iNdEx + skippy) > postIndex {
+						return io.ErrUnexpectedEOF
+					}
+					iNdEx += skippy
+				}
+			}
+			m.Locales[mapkey] = mapvalue
+			iNdEx = postIndex
+		case 13:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Permissions", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMiniappsregistry
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Permissions = append(m.Permissions, string(dAtA[iNdEx:postIndex]))
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipMiniappsregistry(dAtA[iNdEx:])
@@ -2749,6 +4447,939 @@ func (m *AccessTokenResponse) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			m.AccessToken = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipMiniappsregistry(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *GetExtensionsResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowMiniappsregistry
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: GetExtensionsResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: GetExtensionsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field MessageExtensions", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMiniappsregistry
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.MessageExtensions = append(m.MessageExtensions, &ExtensionPoint{})
+			if err := m.MessageExtensions[len(m.MessageExtensions)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ChatExtensions", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMiniappsregistry
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ChatExtensions = append(m.ChatExtensions, &ExtensionPoint{})
+			if err := m.ChatExtensions[len(m.ChatExtensions)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipMiniappsregistry(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *ExtensionPoint) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowMiniappsregistry
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: ExtensionPoint: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: ExtensionPoint: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AppId", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMiniappsregistry
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.AppId == nil {
+				m.AppId = &UUIDValue{}
+			}
+			if err := m.AppId.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Action", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMiniappsregistry
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Action = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Label", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMiniappsregistry
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Label = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field MessageConditions", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMiniappsregistry
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			v := &MessageConditions{}
+			if err := v.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			m.Conditions = &ExtensionPoint_MessageConditions{v}
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field GroupConditions", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMiniappsregistry
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			v := &GroupConditions{}
+			if err := v.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			m.Conditions = &ExtensionPoint_GroupConditions{v}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipMiniappsregistry(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MessageConditions) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowMiniappsregistry
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MessageConditions: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MessageConditions: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field MessageCondition", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMiniappsregistry
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.MessageCondition = append(m.MessageCondition, &MessageConditions_MessageCondition{})
+			if err := m.MessageCondition[len(m.MessageCondition)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipMiniappsregistry(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MessageConditions_MessageCondition) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowMiniappsregistry
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MessageCondition: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MessageCondition: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field TextMessage", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMiniappsregistry
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.TextMessage = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field DocumentMessage", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMiniappsregistry
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.DocumentMessage == nil {
+				m.DocumentMessage = &MessageConditions_MessageCondition_DocumentCondition{}
+			}
+			if err := m.DocumentMessage.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipMiniappsregistry(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MessageConditions_MessageCondition_DocumentCondition) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowMiniappsregistry
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: DocumentCondition: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: DocumentCondition: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field IsImage", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMiniappsregistry
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.IsImage = bool(v != 0)
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field IsVideo", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMiniappsregistry
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.IsVideo = bool(v != 0)
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field IsAudio", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMiniappsregistry
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.IsAudio = bool(v != 0)
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field MimeType", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMiniappsregistry
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.MimeType = append(m.MimeType, string(dAtA[iNdEx:postIndex]))
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipMiniappsregistry(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *GroupConditions) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowMiniappsregistry
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: GroupConditions: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: GroupConditions: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field GroupCondition", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMiniappsregistry
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.GroupCondition = append(m.GroupCondition, &GroupConditions_GroupCondition{})
+			if err := m.GroupCondition[len(m.GroupCondition)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipMiniappsregistry(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *GroupConditions_GroupCondition) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowMiniappsregistry
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: GroupCondition: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: GroupCondition: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field GroupType", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMiniappsregistry
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.GroupType = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Visibility", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMiniappsregistry
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Visibility = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Permission", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMiniappsregistry
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMiniappsregistry
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Permission = append(m.Permission, string(dAtA[iNdEx:postIndex]))
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
