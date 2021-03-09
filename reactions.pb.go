@@ -317,6 +317,100 @@ func (m *GetReactionsResponse) GetNextAvailable() bool {
 	return false
 }
 
+type GetMessageReactionsRequest struct {
+	Peer       *Peer        `protobuf:"bytes,1,opt,name=peer,proto3" json:"peer,omitempty"`
+	MessageIds []*UUIDValue `protobuf:"bytes,2,rep,name=message_ids,json=messageIds,proto3" json:"message_ids,omitempty"`
+}
+
+func (m *GetMessageReactionsRequest) Reset()      { *m = GetMessageReactionsRequest{} }
+func (*GetMessageReactionsRequest) ProtoMessage() {}
+func (*GetMessageReactionsRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_099b686174f3ebae, []int{5}
+}
+func (m *GetMessageReactionsRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GetMessageReactionsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GetMessageReactionsRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *GetMessageReactionsRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetMessageReactionsRequest.Merge(m, src)
+}
+func (m *GetMessageReactionsRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *GetMessageReactionsRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetMessageReactionsRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GetMessageReactionsRequest proto.InternalMessageInfo
+
+func (m *GetMessageReactionsRequest) GetPeer() *Peer {
+	if m != nil {
+		return m.Peer
+	}
+	return nil
+}
+
+func (m *GetMessageReactionsRequest) GetMessageIds() []*UUIDValue {
+	if m != nil {
+		return m.MessageIds
+	}
+	return nil
+}
+
+type GetMessageReactionsResponse struct {
+	MessageReactions []*MessageReactions `protobuf:"bytes,1,rep,name=messageReactions,proto3" json:"messageReactions,omitempty"`
+}
+
+func (m *GetMessageReactionsResponse) Reset()      { *m = GetMessageReactionsResponse{} }
+func (*GetMessageReactionsResponse) ProtoMessage() {}
+func (*GetMessageReactionsResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_099b686174f3ebae, []int{6}
+}
+func (m *GetMessageReactionsResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GetMessageReactionsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GetMessageReactionsResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *GetMessageReactionsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetMessageReactionsResponse.Merge(m, src)
+}
+func (m *GetMessageReactionsResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *GetMessageReactionsResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetMessageReactionsResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GetMessageReactionsResponse proto.InternalMessageInfo
+
+func (m *GetMessageReactionsResponse) GetMessageReactions() []*MessageReactions {
+	if m != nil {
+		return m.MessageReactions
+	}
+	return nil
+}
+
 type RequestSetMessageReaction struct {
 	Peer *Peer      `protobuf:"bytes,1,opt,name=peer,proto3" json:"peer,omitempty"`
 	Mid  *UUIDValue `protobuf:"bytes,2,opt,name=mid,proto3" json:"mid,omitempty"`
@@ -326,7 +420,7 @@ type RequestSetMessageReaction struct {
 func (m *RequestSetMessageReaction) Reset()      { *m = RequestSetMessageReaction{} }
 func (*RequestSetMessageReaction) ProtoMessage() {}
 func (*RequestSetMessageReaction) Descriptor() ([]byte, []int) {
-	return fileDescriptor_099b686174f3ebae, []int{5}
+	return fileDescriptor_099b686174f3ebae, []int{7}
 }
 func (m *RequestSetMessageReaction) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -385,7 +479,7 @@ type RequestRemoveMessageReaction struct {
 func (m *RequestRemoveMessageReaction) Reset()      { *m = RequestRemoveMessageReaction{} }
 func (*RequestRemoveMessageReaction) ProtoMessage() {}
 func (*RequestRemoveMessageReaction) Descriptor() ([]byte, []int) {
-	return fileDescriptor_099b686174f3ebae, []int{6}
+	return fileDescriptor_099b686174f3ebae, []int{8}
 }
 func (m *RequestRemoveMessageReaction) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -441,6 +535,8 @@ func init() {
 	proto.RegisterType((*MessageReactionsUpdate)(nil), "dialog.reactions.MessageReactionsUpdate")
 	proto.RegisterType((*GetReactionsRequest)(nil), "dialog.reactions.GetReactionsRequest")
 	proto.RegisterType((*GetReactionsResponse)(nil), "dialog.reactions.GetReactionsResponse")
+	proto.RegisterType((*GetMessageReactionsRequest)(nil), "dialog.reactions.GetMessageReactionsRequest")
+	proto.RegisterType((*GetMessageReactionsResponse)(nil), "dialog.reactions.GetMessageReactionsResponse")
 	proto.RegisterType((*RequestSetMessageReaction)(nil), "dialog.reactions.RequestSetMessageReaction")
 	proto.RegisterType((*RequestRemoveMessageReaction)(nil), "dialog.reactions.RequestRemoveMessageReaction")
 }
@@ -448,50 +544,54 @@ func init() {
 func init() { proto.RegisterFile("reactions.proto", fileDescriptor_099b686174f3ebae) }
 
 var fileDescriptor_099b686174f3ebae = []byte{
-	// 674 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xbc, 0x54, 0xcf, 0x6e, 0xd3, 0x4e,
-	0x10, 0xce, 0x26, 0x6d, 0xd5, 0x6c, 0xda, 0x5f, 0xdb, 0xfd, 0xb5, 0x55, 0x08, 0xc5, 0x84, 0x85,
-	0x56, 0x51, 0x10, 0x36, 0xb4, 0x17, 0xd4, 0x5b, 0xf9, 0x23, 0x84, 0x04, 0xa8, 0x72, 0xd5, 0x22,
-	0x71, 0x89, 0x36, 0xce, 0x34, 0xb2, 0xb0, 0xbd, 0xae, 0xd7, 0x89, 0xe8, 0x0d, 0x71, 0x43, 0x5c,
-	0x90, 0xe0, 0x21, 0x38, 0xf0, 0x08, 0x3c, 0x00, 0x37, 0x2a, 0x71, 0xe9, 0x91, 0xba, 0x1c, 0x38,
-	0xf6, 0x11, 0xd0, 0xae, 0xed, 0x24, 0x75, 0x12, 0xe8, 0x89, 0x53, 0xbc, 0xdf, 0xce, 0x7c, 0xdf,
-	0xcc, 0x37, 0x93, 0xc5, 0x73, 0x01, 0x30, 0x2b, 0xb4, 0xb9, 0x27, 0x74, 0x3f, 0xe0, 0x21, 0x27,
-	0xf3, 0x2d, 0x9b, 0x39, 0xbc, 0xad, 0xf7, 0xf0, 0xca, 0x4a, 0x9b, 0xf3, 0xb6, 0x03, 0x06, 0xf3,
-	0x6d, 0x83, 0x79, 0x1e, 0x0f, 0xd9, 0x40, 0x7c, 0xa5, 0xe4, 0x03, 0x04, 0xe9, 0x61, 0xa1, 0x05,
-	0xfb, 0xb6, 0x67, 0x0f, 0xde, 0x2f, 0x09, 0x8b, 0x39, 0xcc, 0x6f, 0x1a, 0xc9, 0x6f, 0x02, 0x5f,
-	0x4e, 0x48, 0xd5, 0xa9, 0xd9, 0xd9, 0x37, 0xc0, 0xf5, 0xc3, 0xc3, 0xf8, 0x92, 0x3e, 0xc7, 0xd3,
-	0x66, 0x22, 0x4f, 0x08, 0x9e, 0xb0, 0x78, 0x0b, 0xca, 0xa8, 0x8a, 0x6a, 0x45, 0x53, 0x7d, 0x93,
-	0x45, 0x3c, 0xd9, 0x11, 0x10, 0x88, 0x72, 0xbe, 0x5a, 0xa8, 0x4d, 0x9a, 0xf1, 0x81, 0x5c, 0xc3,
-	0x33, 0xea, 0xa3, 0xc1, 0x5c, 0xde, 0xf1, 0xc2, 0x72, 0xa1, 0x8a, 0x6a, 0x93, 0x66, 0x49, 0x61,
-	0x5b, 0x0a, 0xa2, 0x07, 0x78, 0xfe, 0x29, 0x08, 0xc1, 0xda, 0x90, 0xf2, 0x0b, 0x72, 0x1d, 0x17,
-	0x5c, 0xbb, 0xa5, 0xf8, 0x4b, 0xeb, 0x0b, 0x7a, 0xd2, 0xfe, 0xee, 0xee, 0xe3, 0x07, 0x7b, 0xcc,
-	0xe9, 0x80, 0x29, 0x6f, 0xc9, 0x5d, 0x5c, 0xec, 0x19, 0xa2, 0x54, 0x4b, 0xeb, 0x15, 0x3d, 0xeb,
-	0x94, 0x9e, 0x92, 0x9a, 0xfd, 0x60, 0xfa, 0x0d, 0xe1, 0xe5, 0xac, 0xe6, 0xae, 0xdf, 0x62, 0x21,
-	0x90, 0x2a, 0x9e, 0x90, 0xe6, 0x25, 0xd2, 0x33, 0x29, 0xdf, 0x36, 0x40, 0x60, 0xaa, 0x1b, 0xf2,
-	0x04, 0xcf, 0xb9, 0xe7, 0x73, 0xcb, 0x79, 0x15, 0x4c, 0x87, 0xc5, 0xb3, 0x22, 0x66, 0x36, 0x95,
-	0x5c, 0xc1, 0x58, 0xb2, 0x36, 0x2c, 0x87, 0x5b, 0x2f, 0x95, 0x3d, 0x05, 0xb3, 0x28, 0x91, 0xfb,
-	0x12, 0x20, 0x6b, 0x78, 0xce, 0x0f, 0xa0, 0xdb, 0x18, 0x88, 0x99, 0x50, 0x31, 0xb3, 0x12, 0xde,
-	0x4e, 0xe3, 0xe8, 0x1e, 0xfe, 0xff, 0x11, 0x84, 0x7d, 0x1d, 0x38, 0xe8, 0x80, 0x08, 0x25, 0xfb,
-	0x7e, 0xc0, 0xdd, 0x24, 0x13, 0xc5, 0xec, 0x12, 0x89, 0xd9, 0xd3, 0x66, 0xf3, 0xe3, 0x9a, 0xa5,
-	0x9f, 0x11, 0x5e, 0x3c, 0x4f, 0x2c, 0x7c, 0xee, 0x09, 0x20, 0xcf, 0xf0, 0x7c, 0xa6, 0x15, 0x51,
-	0x46, 0x6a, 0x06, 0x17, 0xb1, 0x61, 0x28, 0x37, 0xe3, 0x43, 0x3e, 0xeb, 0xc3, 0x2a, 0xfe, 0xcf,
-	0x83, 0x57, 0x61, 0x83, 0x75, 0x99, 0xed, 0xb0, 0xa6, 0x03, 0xca, 0xaa, 0x69, 0x73, 0x56, 0xa2,
-	0x5b, 0x29, 0x48, 0xbb, 0xf8, 0x52, 0xd2, 0xfa, 0x0e, 0x84, 0x19, 0xd5, 0x0b, 0x8c, 0x36, 0x59,
-	0xbb, 0xfc, 0x1f, 0xd7, 0x2e, 0x5d, 0xfe, 0x42, 0x7f, 0xf9, 0xe9, 0x21, 0x5e, 0x49, 0x74, 0x4d,
-	0x70, 0x79, 0x17, 0xfe, 0x9d, 0xf4, 0xfa, 0x97, 0x02, 0x2e, 0xf6, 0x6d, 0x7c, 0x8b, 0xf0, 0xcc,
-	0xe0, 0xbc, 0xc8, 0xea, 0xf0, 0x34, 0x46, 0x2c, 0x4a, 0x65, 0xed, 0x6f, 0x61, 0xf1, 0xd8, 0x69,
-	0xfd, 0xcd, 0xf7, 0x9f, 0x1f, 0xf2, 0x37, 0xe8, 0x55, 0xa3, 0x7b, 0xc7, 0x68, 0x07, 0xbe, 0x65,
-	0xf4, 0x62, 0x8c, 0xc1, 0x84, 0x4d, 0x54, 0x27, 0xef, 0x10, 0x26, 0x89, 0x11, 0x3b, 0xfd, 0x2b,
-	0x72, 0x73, 0xd4, 0x7f, 0x74, 0xcc, 0xcc, 0x2a, 0xcb, 0x7a, 0xfc, 0x26, 0xe9, 0xe9, 0x9b, 0xa4,
-	0x3f, 0x94, 0x6f, 0x12, 0xbd, 0xad, 0xea, 0xa8, 0xd3, 0xd5, 0x11, 0x75, 0x0c, 0x6b, 0xca, 0x6a,
-	0x3e, 0x22, 0xbc, 0xd4, 0x63, 0x97, 0x33, 0xea, 0x15, 0xa4, 0x8f, 0x2d, 0x68, 0xe4, 0x30, 0xc7,
-	0xd6, 0xb4, 0xa1, 0x6a, 0xba, 0x45, 0x6b, 0xe3, 0x6b, 0x3a, 0xaf, 0xbc, 0x89, 0xea, 0xf7, 0xcc,
-	0xa3, 0x13, 0x2d, 0x77, 0x7c, 0xa2, 0xe5, 0xce, 0x4e, 0x34, 0xf4, 0x3a, 0xd2, 0xd0, 0xa7, 0x48,
-	0x43, 0x5f, 0x23, 0x0d, 0x1d, 0x45, 0x1a, 0xfa, 0x11, 0x69, 0xe8, 0x57, 0xa4, 0xe5, 0xce, 0x22,
-	0x0d, 0xbd, 0x3f, 0xd5, 0x72, 0x47, 0xa7, 0x5a, 0xee, 0xf8, 0x54, 0xcb, 0xe1, 0x45, 0xdb, 0xd5,
-	0x5b, 0x4e, 0x5b, 0x97, 0x2a, 0xba, 0x80, 0xa0, 0x6b, 0x5b, 0x20, 0x5e, 0x4c, 0xc5, 0x7d, 0x34,
-	0xa7, 0x54, 0x61, 0x1b, 0xbf, 0x03, 0x00, 0x00, 0xff, 0xff, 0x66, 0x3b, 0xc5, 0x80, 0x48, 0x06,
-	0x00, 0x00,
+	// 742 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xbc, 0x55, 0x41, 0x4f, 0x13, 0x41,
+	0x14, 0xee, 0xb4, 0x85, 0xd0, 0x57, 0x90, 0x32, 0x02, 0xa9, 0x05, 0xd7, 0x3a, 0x0a, 0x69, 0xaa,
+	0xec, 0x62, 0xb9, 0x18, 0x6e, 0xa0, 0x86, 0x90, 0xa8, 0x21, 0x4b, 0xc0, 0xc4, 0x4b, 0x33, 0xed,
+	0x0e, 0xcd, 0xc6, 0xdd, 0xee, 0xb2, 0xb3, 0x6d, 0xc4, 0x93, 0xf1, 0xa6, 0x5e, 0x4c, 0xf4, 0xec,
+	0xd9, 0x83, 0x3f, 0xc4, 0x9b, 0x24, 0x5e, 0xb8, 0x98, 0x48, 0xf1, 0x60, 0x3c, 0xf1, 0x13, 0xcc,
+	0x4e, 0x67, 0xdb, 0xd2, 0x76, 0x95, 0x98, 0xe8, 0xa9, 0x9d, 0x37, 0x6f, 0xbe, 0xef, 0x7b, 0xdf,
+	0xbc, 0xb7, 0x03, 0x93, 0x1e, 0xa3, 0x55, 0xdf, 0x74, 0xea, 0x5c, 0x75, 0x3d, 0xc7, 0x77, 0x70,
+	0xc6, 0x30, 0xa9, 0xe5, 0xd4, 0xd4, 0x4e, 0x3c, 0x37, 0x5f, 0x73, 0x9c, 0x9a, 0xc5, 0x34, 0xea,
+	0x9a, 0x1a, 0xad, 0xd7, 0x1d, 0x9f, 0xf6, 0xe4, 0xe7, 0xd2, 0x2e, 0x63, 0x5e, 0xb8, 0x98, 0x32,
+	0xd8, 0x9e, 0x59, 0x37, 0x7b, 0xf7, 0x67, 0x78, 0x95, 0x5a, 0xd4, 0xad, 0x68, 0xf2, 0x57, 0x86,
+	0xe7, 0x24, 0xa8, 0x58, 0x55, 0x1a, 0x7b, 0x1a, 0xb3, 0x5d, 0xff, 0xa0, 0xbd, 0x49, 0x1e, 0xc1,
+	0x98, 0x2e, 0xe9, 0x31, 0x86, 0x64, 0xd5, 0x31, 0x58, 0x16, 0xe5, 0x51, 0x21, 0xa5, 0x8b, 0xff,
+	0x78, 0x1a, 0x46, 0x1a, 0x9c, 0x79, 0x3c, 0x1b, 0xcf, 0x27, 0x0a, 0x23, 0x7a, 0x7b, 0x81, 0xaf,
+	0xc2, 0xb8, 0xf8, 0x53, 0xa6, 0xb6, 0xd3, 0xa8, 0xfb, 0xd9, 0x44, 0x1e, 0x15, 0x46, 0xf4, 0xb4,
+	0x88, 0xad, 0x89, 0x10, 0xd9, 0x87, 0xcc, 0x03, 0xc6, 0x39, 0xad, 0xb1, 0x10, 0x9f, 0xe3, 0x6b,
+	0x90, 0xb0, 0x4d, 0x43, 0xe0, 0xa7, 0x4b, 0x53, 0xaa, 0x2c, 0x7f, 0x67, 0x67, 0xf3, 0xee, 0x2e,
+	0xb5, 0x1a, 0x4c, 0x0f, 0x76, 0xf1, 0x6d, 0x48, 0x75, 0x0c, 0x11, 0xac, 0xe9, 0x52, 0x4e, 0xed,
+	0x77, 0x4a, 0x0d, 0x41, 0xf5, 0x6e, 0x32, 0xf9, 0x8c, 0x60, 0xb6, 0x9f, 0x73, 0xc7, 0x35, 0xa8,
+	0xcf, 0x70, 0x1e, 0x92, 0x81, 0x79, 0x92, 0x7a, 0x3c, 0xc4, 0xdb, 0x62, 0xcc, 0xd3, 0xc5, 0x0e,
+	0xbe, 0x0f, 0x93, 0xf6, 0xd9, 0xb3, 0xd9, 0xb8, 0x48, 0x26, 0x83, 0xe4, 0xfd, 0x24, 0x7a, 0xff,
+	0x51, 0x7c, 0x19, 0x20, 0x40, 0x2d, 0x57, 0x2d, 0xa7, 0xfa, 0x44, 0xd8, 0x93, 0xd0, 0x53, 0x41,
+	0xe4, 0x4e, 0x10, 0xc0, 0x8b, 0x30, 0xe9, 0x7a, 0xac, 0x59, 0xee, 0xc9, 0x49, 0x8a, 0x9c, 0x89,
+	0x20, 0xbc, 0x15, 0xe6, 0x91, 0x5d, 0xb8, 0xb8, 0xc1, 0xfc, 0x2e, 0x0f, 0xdb, 0x6f, 0x30, 0xee,
+	0x07, 0xe8, 0x7b, 0x9e, 0x63, 0xcb, 0x93, 0xa8, 0x8d, 0x1e, 0x44, 0xda, 0xe8, 0x61, 0xb1, 0xf1,
+	0xa8, 0x62, 0xc9, 0x47, 0x04, 0xd3, 0x67, 0x81, 0xb9, 0xeb, 0xd4, 0x39, 0xc3, 0x0f, 0x21, 0xd3,
+	0x57, 0x0a, 0xcf, 0x22, 0x71, 0x07, 0xe7, 0xb1, 0x61, 0xe0, 0x6c, 0x9f, 0x0f, 0xf1, 0x7e, 0x1f,
+	0x16, 0xe0, 0x42, 0x9d, 0x3d, 0xf5, 0xcb, 0xb4, 0x49, 0x4d, 0x8b, 0x56, 0x2c, 0x26, 0xac, 0x1a,
+	0xd3, 0x27, 0x82, 0xe8, 0x5a, 0x18, 0x24, 0xcf, 0x20, 0xb7, 0xc1, 0xfc, 0x01, 0x3a, 0xe9, 0x46,
+	0x21, 0xfa, 0x6e, 0xd7, 0x47, 0x5f, 0xfd, 0x5c, 0x8e, 0x67, 0x90, 0xbc, 0xe3, 0x12, 0xa4, 0xa5,
+	0xc2, 0xb2, 0x69, 0x84, 0xcd, 0x35, 0xa4, 0x0f, 0x41, 0x66, 0x6d, 0x1a, 0x9c, 0xd8, 0x30, 0x37,
+	0x94, 0xfb, 0xdf, 0x18, 0x46, 0x9a, 0x70, 0x49, 0xd6, 0xb5, 0x3d, 0xc0, 0x7a, 0x8e, 0x2e, 0x96,
+	0x13, 0x16, 0xff, 0xed, 0x84, 0x85, 0x73, 0x9e, 0xe8, 0xce, 0x39, 0x39, 0x80, 0x79, 0xc9, 0xab,
+	0x33, 0xdb, 0x69, 0xb2, 0xff, 0x47, 0x5d, 0xfa, 0x9a, 0x84, 0x54, 0xb7, 0x63, 0x5e, 0x22, 0x18,
+	0xef, 0x6d, 0x4d, 0xbc, 0x30, 0xe8, 0xe3, 0x90, 0x99, 0xc8, 0x2d, 0xfe, 0x29, 0xad, 0x7d, 0x61,
+	0xa4, 0xf8, 0xe2, 0xcb, 0xf7, 0xb7, 0xf1, 0xeb, 0xe4, 0x8a, 0xd6, 0xbc, 0xa5, 0xd5, 0x3c, 0xb7,
+	0xaa, 0x75, 0x72, 0xb4, 0xde, 0x03, 0xab, 0xa8, 0x88, 0xdf, 0x23, 0x31, 0x7f, 0x03, 0xdf, 0xb1,
+	0x9b, 0x43, 0xb9, 0x22, 0xfa, 0x33, 0xb7, 0x74, 0xce, 0xec, 0xbf, 0x10, 0xf8, 0x1a, 0x01, 0x96,
+	0x40, 0xdb, 0xdd, 0x2d, 0x7c, 0x63, 0xd8, 0xf7, 0x32, 0xa2, 0xa9, 0x72, 0xb3, 0x6a, 0xfb, 0x7d,
+	0x50, 0xc3, 0xf7, 0x41, 0xbd, 0x17, 0xbc, 0x0f, 0x64, 0x59, 0xe8, 0x28, 0x92, 0x85, 0x21, 0x3a,
+	0x06, 0x39, 0x03, 0x35, 0xef, 0x10, 0xcc, 0x74, 0xd0, 0x83, 0x26, 0xea, 0x08, 0x52, 0x23, 0x05,
+	0x0d, 0xed, 0xb6, 0x48, 0x4d, 0x2b, 0x42, 0xd3, 0x12, 0x29, 0x44, 0x6b, 0x3a, 0xcb, 0xbc, 0x8a,
+	0x8a, 0xeb, 0xfa, 0xe1, 0xb1, 0x12, 0x3b, 0x3a, 0x56, 0x62, 0xa7, 0xc7, 0x0a, 0x7a, 0xde, 0x52,
+	0xd0, 0x87, 0x96, 0x82, 0x3e, 0xb5, 0x14, 0x74, 0xd8, 0x52, 0xd0, 0xb7, 0x96, 0x82, 0x7e, 0xb4,
+	0x94, 0xd8, 0x69, 0x4b, 0x41, 0x6f, 0x4e, 0x94, 0xd8, 0xe1, 0x89, 0x12, 0x3b, 0x3a, 0x51, 0x62,
+	0x30, 0x6d, 0xda, 0xaa, 0x61, 0xd5, 0xd4, 0x80, 0x45, 0xe5, 0xcc, 0x6b, 0x9a, 0x55, 0xc6, 0x1f,
+	0x8f, 0xb6, 0xeb, 0xa8, 0x8c, 0x0a, 0x61, 0x2b, 0xbf, 0x02, 0x00, 0x00, 0xff, 0xff, 0xeb, 0xcb,
+	0x58, 0xac, 0xd4, 0x07, 0x00, 0x00,
 }
 
 func (this *Reaction) Equal(that interface{}) bool {
@@ -656,6 +756,67 @@ func (this *GetReactionsResponse) Equal(that interface{}) bool {
 	}
 	return true
 }
+func (this *GetMessageReactionsRequest) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*GetMessageReactionsRequest)
+	if !ok {
+		that2, ok := that.(GetMessageReactionsRequest)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if !this.Peer.Equal(that1.Peer) {
+		return false
+	}
+	if len(this.MessageIds) != len(that1.MessageIds) {
+		return false
+	}
+	for i := range this.MessageIds {
+		if !this.MessageIds[i].Equal(that1.MessageIds[i]) {
+			return false
+		}
+	}
+	return true
+}
+func (this *GetMessageReactionsResponse) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*GetMessageReactionsResponse)
+	if !ok {
+		that2, ok := that.(GetMessageReactionsResponse)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if len(this.MessageReactions) != len(that1.MessageReactions) {
+		return false
+	}
+	for i := range this.MessageReactions {
+		if !this.MessageReactions[i].Equal(that1.MessageReactions[i]) {
+			return false
+		}
+	}
+	return true
+}
 func (this *RequestSetMessageReaction) Equal(that interface{}) bool {
 	if that == nil {
 		return this == nil
@@ -787,6 +948,33 @@ func (this *GetReactionsResponse) GoString() string {
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
+func (this *GetMessageReactionsRequest) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 6)
+	s = append(s, "&dialog.GetMessageReactionsRequest{")
+	if this.Peer != nil {
+		s = append(s, "Peer: "+fmt.Sprintf("%#v", this.Peer)+",\n")
+	}
+	if this.MessageIds != nil {
+		s = append(s, "MessageIds: "+fmt.Sprintf("%#v", this.MessageIds)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *GetMessageReactionsResponse) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 5)
+	s = append(s, "&dialog.GetMessageReactionsResponse{")
+	if this.MessageReactions != nil {
+		s = append(s, "MessageReactions: "+fmt.Sprintf("%#v", this.MessageReactions)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
 func (this *RequestSetMessageReaction) GoString() string {
 	if this == nil {
 		return "nil"
@@ -841,6 +1029,7 @@ const _ = grpc.SupportPackageIsVersion4
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type ReactionsClient interface {
 	GetReactions(ctx context.Context, in *GetReactionsRequest, opts ...grpc.CallOption) (*GetReactionsResponse, error)
+	GetMessageReactions(ctx context.Context, in *GetMessageReactionsRequest, opts ...grpc.CallOption) (*GetMessageReactionsResponse, error)
 	MessageSetReaction(ctx context.Context, in *RequestSetMessageReaction, opts ...grpc.CallOption) (*types.Empty, error)
 	MessageRemoveReaction(ctx context.Context, in *RequestRemoveMessageReaction, opts ...grpc.CallOption) (*types.Empty, error)
 }
@@ -856,6 +1045,15 @@ func NewReactionsClient(cc *grpc.ClientConn) ReactionsClient {
 func (c *reactionsClient) GetReactions(ctx context.Context, in *GetReactionsRequest, opts ...grpc.CallOption) (*GetReactionsResponse, error) {
 	out := new(GetReactionsResponse)
 	err := c.cc.Invoke(ctx, "/dialog.reactions.Reactions/GetReactions", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *reactionsClient) GetMessageReactions(ctx context.Context, in *GetMessageReactionsRequest, opts ...grpc.CallOption) (*GetMessageReactionsResponse, error) {
+	out := new(GetMessageReactionsResponse)
+	err := c.cc.Invoke(ctx, "/dialog.reactions.Reactions/GetMessageReactions", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -883,6 +1081,7 @@ func (c *reactionsClient) MessageRemoveReaction(ctx context.Context, in *Request
 // ReactionsServer is the server API for Reactions service.
 type ReactionsServer interface {
 	GetReactions(context.Context, *GetReactionsRequest) (*GetReactionsResponse, error)
+	GetMessageReactions(context.Context, *GetMessageReactionsRequest) (*GetMessageReactionsResponse, error)
 	MessageSetReaction(context.Context, *RequestSetMessageReaction) (*types.Empty, error)
 	MessageRemoveReaction(context.Context, *RequestRemoveMessageReaction) (*types.Empty, error)
 }
@@ -893,6 +1092,9 @@ type UnimplementedReactionsServer struct {
 
 func (*UnimplementedReactionsServer) GetReactions(ctx context.Context, req *GetReactionsRequest) (*GetReactionsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetReactions not implemented")
+}
+func (*UnimplementedReactionsServer) GetMessageReactions(ctx context.Context, req *GetMessageReactionsRequest) (*GetMessageReactionsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetMessageReactions not implemented")
 }
 func (*UnimplementedReactionsServer) MessageSetReaction(ctx context.Context, req *RequestSetMessageReaction) (*types.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MessageSetReaction not implemented")
@@ -919,6 +1121,24 @@ func _Reactions_GetReactions_Handler(srv interface{}, ctx context.Context, dec f
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ReactionsServer).GetReactions(ctx, req.(*GetReactionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Reactions_GetMessageReactions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetMessageReactionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ReactionsServer).GetMessageReactions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/dialog.reactions.Reactions/GetMessageReactions",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ReactionsServer).GetMessageReactions(ctx, req.(*GetMessageReactionsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -966,6 +1186,10 @@ var _Reactions_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetReactions",
 			Handler:    _Reactions_GetReactions_Handler,
+		},
+		{
+			MethodName: "GetMessageReactions",
+			Handler:    _Reactions_GetMessageReactions_Handler,
 		},
 		{
 			MethodName: "MessageSetReaction",
@@ -1232,6 +1456,92 @@ func (m *GetReactionsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
+func (m *GetMessageReactionsRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *GetMessageReactionsRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *GetMessageReactionsRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.MessageIds) > 0 {
+		for iNdEx := len(m.MessageIds) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.MessageIds[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintReactions(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x12
+		}
+	}
+	if m.Peer != nil {
+		{
+			size, err := m.Peer.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintReactions(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *GetMessageReactionsResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *GetMessageReactionsResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *GetMessageReactionsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.MessageReactions) > 0 {
+		for iNdEx := len(m.MessageReactions) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.MessageReactions[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintReactions(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
 func (m *RequestSetMessageReaction) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -1453,6 +1763,40 @@ func (m *GetReactionsResponse) Size() (n int) {
 	return n
 }
 
+func (m *GetMessageReactionsRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Peer != nil {
+		l = m.Peer.Size()
+		n += 1 + l + sovReactions(uint64(l))
+	}
+	if len(m.MessageIds) > 0 {
+		for _, e := range m.MessageIds {
+			l = e.Size()
+			n += 1 + l + sovReactions(uint64(l))
+		}
+	}
+	return n
+}
+
+func (m *GetMessageReactionsResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.MessageReactions) > 0 {
+		for _, e := range m.MessageReactions {
+			l = e.Size()
+			n += 1 + l + sovReactions(uint64(l))
+		}
+	}
+	return n
+}
+
 func (m *RequestSetMessageReaction) Size() (n int) {
 	if m == nil {
 		return 0
@@ -1566,6 +1910,37 @@ func (this *GetReactionsResponse) String() string {
 		`MessageReactions:` + repeatedStringForMessageReactions + `,`,
 		`PeerClock:` + fmt.Sprintf("%v", this.PeerClock) + `,`,
 		`NextAvailable:` + fmt.Sprintf("%v", this.NextAvailable) + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *GetMessageReactionsRequest) String() string {
+	if this == nil {
+		return "nil"
+	}
+	repeatedStringForMessageIds := "[]*UUIDValue{"
+	for _, f := range this.MessageIds {
+		repeatedStringForMessageIds += strings.Replace(fmt.Sprintf("%v", f), "UUIDValue", "UUIDValue", 1) + ","
+	}
+	repeatedStringForMessageIds += "}"
+	s := strings.Join([]string{`&GetMessageReactionsRequest{`,
+		`Peer:` + strings.Replace(fmt.Sprintf("%v", this.Peer), "Peer", "Peer", 1) + `,`,
+		`MessageIds:` + repeatedStringForMessageIds + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *GetMessageReactionsResponse) String() string {
+	if this == nil {
+		return "nil"
+	}
+	repeatedStringForMessageReactions := "[]*MessageReactions{"
+	for _, f := range this.MessageReactions {
+		repeatedStringForMessageReactions += strings.Replace(f.String(), "MessageReactions", "MessageReactions", 1) + ","
+	}
+	repeatedStringForMessageReactions += "}"
+	s := strings.Join([]string{`&GetMessageReactionsResponse{`,
+		`MessageReactions:` + repeatedStringForMessageReactions + `,`,
 		`}`,
 	}, "")
 	return s
@@ -2278,6 +2653,216 @@ func (m *GetReactionsResponse) Unmarshal(dAtA []byte) error {
 				}
 			}
 			m.NextAvailable = bool(v != 0)
+		default:
+			iNdEx = preIndex
+			skippy, err := skipReactions(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthReactions
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthReactions
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *GetMessageReactionsRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowReactions
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: GetMessageReactionsRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: GetMessageReactionsRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Peer", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowReactions
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthReactions
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthReactions
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Peer == nil {
+				m.Peer = &Peer{}
+			}
+			if err := m.Peer.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field MessageIds", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowReactions
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthReactions
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthReactions
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.MessageIds = append(m.MessageIds, &UUIDValue{})
+			if err := m.MessageIds[len(m.MessageIds)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipReactions(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthReactions
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthReactions
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *GetMessageReactionsResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowReactions
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: GetMessageReactionsResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: GetMessageReactionsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field MessageReactions", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowReactions
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthReactions
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthReactions
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.MessageReactions = append(m.MessageReactions, &MessageReactions{})
+			if err := m.MessageReactions[len(m.MessageReactions)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipReactions(dAtA[iNdEx:])
